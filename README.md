@@ -11,72 +11,91 @@
 [![Tests](https://img.shields.io/badge/tests-94%20passed-brightgreen.svg)](docs/TESTING.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-BioInsight AI 2.0 is an enterprise-grade, local-first bioinformatics research and molecular discovery platform built for life scientists, medicinal chemists, and computational biologists. It combines deep multi-omics intelligence, an extensible 11-database federated query hub, a turnkey AutoDock Vina molecular docking workbench with 3D WebGL visualization, and automated publication-grade PDF/DOCX research reporting.
+BioInsight AI 2.0 is an enterprise-grade, local-first bioinformatics research and molecular discovery platform built for life scientists, medicinal chemists, and computational biologists. It integrates multi-omics intelligence, an extensible 11-database federated query hub, a turnkey AutoDock Vina molecular docking workbench with interactive 3D WebGL visualization, and automated publication-grade PDF/DOCX research reporting.
 
 ---
 
 ## Table of Contents
 
-1. [Project Overview & Mission](#1-project-overview--mission)
-2. [The Problem BioInsight Solves](#2-the-problem-bioinsight-solves)
-3. [The Solution & Value Proposition](#3-the-solution--value-proposition)
-4. [Core Features & Capabilities](#4-core-features--capabilities)
+1. [Project Overview & Problem Statement](#1-project-overview--problem-statement)
+2. [Target Audience & Key Benefits](#2-target-audience--key-benefits)
+3. [Core Platform Features](#3-core-platform-features)
+4. [System Architecture](#4-system-architecture)
 5. [Technology Stack](#5-technology-stack)
-6. [Architecture & System Design](#6-architecture--system-design)
-7. [Prerequisites & System Requirements](#7-prerequisites--system-requirements)
-8. [Git Cloning & Workspace Setup](#8-git-cloning--workspace-setup)
-9. [PostgreSQL Database Installation & Configuration](#9-postgresql-database-installation--configuration)
-10. [Environment Variables Configuration](#10-environment-variables-configuration)
-11. [Backend Startup & Operation](#11-backend-startup--operation)
-12. [Frontend Startup & Operation](#12-frontend-startup--operation)
-13. [Testing & Verification Guide](#13-testing--verification-guide)
-14. [Scientific Data Sources & Methodology](#14-scientific-data-sources--methodology)
-15. [Honest Status & Known Limitations](#15-honest-status--known-limitations)
+6. [Prerequisites & System Requirements](#6-prerequisites--system-requirements)
+7. [Step-by-Step Installation & Setup](#7-step-by-step-installation--setup)
+8. [AutoDock Vina Configuration & Docking Walkthrough](#8-autodock-vina-configuration--docking-walkthrough)
+9. [Environment Variable Configuration](#9-environment-variable-configuration)
+10. [Running Automated Tests](#10-running-automated-tests)
+11. [Supported Production Deployment Architecture](#11-supported-production-deployment-architecture)
+12. [Scientific Reproducibility & Responsibility](#12-scientific-reproducibility--responsibility)
+13. [Scientific Attribution & Third-Party Licenses](#13-scientific-attribution--third-party-licenses)
+14. [Documentation Links](#14-documentation-links)
 
 ---
 
-## 1. Project Overview & Mission
+## 1. Project Overview & Problem Statement
 
-BioInsight AI addresses the fragmentation of modern biological data science by providing a centralized, local-first platform that connects directly to authoritative scientific databases while running algorithms locally.
+Modern biomedical research is severely hindered by **tool and database fragmentation**:
 
-### Key Tenets
-- **Data Provenance First**: Every retrieved biological record, structure reference, and computational result clearly identifies its source (e.g., UniProtKB, AlphaFold DB, NCBI Entrez, or local Biopython execution).
-- **Local-First & Privacy Conscious**: Runs entirely on your local machine using standard Python and Node.js runtimes with a local PostgreSQL database. No mandatory cloud accounts, third-party tracking, or GPU hardware are required.
-- **Scientific Rigor**: No synthesized or "hallucinated" biological facts. When an upstream service is unavailable or a sequence contains ambiguous residues, the platform reports the exact constraints rather than guessing.
+- **Siloed Resources**: Investigating a single biological target requires juggling between NCBI Entrez, UniProtKB, RCSB PDB, AlphaFold DB, PubChem, and command-line BLAST tools.
+- **Structural Ambiguity**: Deep-learning predictions (AlphaFold pLDDT scores) are frequently conflated with experimentally determined crystallographic coordinates (X-ray resolution, cryo-EM).
+- **Environment Fragility**: Computational chemistry environments often suffer from conflicting C++ binaries, brittle Biopython wrappers, and heavy Docker virtualization overhead.
+- **Data Privacy & IP Risks**: Researchers handling proprietary candidate sequences or unreleased chemical scaffolds cannot upload sensitive intellectual property to opaque cloud web services.
 
----
+### The BioInsight AI 2.0 Solution
 
-## 2. The Problem BioInsight Solves
-
-Life science researchers face several daily operational friction points:
-1. **Tool and Database Fragmentation**: Investigating a single target typically requires toggling between NCBI Entrez, UniProtKB, RCSB PDB, AlphaFold DB, and command-line BLAST tools.
-2. **Ambiguity in Structural Confidence**: Predictions from deep learning models (e.g., AlphaFold) are frequently confused with experimentally solved structures from X-ray crystallography or cryo-EM.
-3. **Complex Local Environments**: Setting up traditional bioinformatics toolchains often involves brittle dependencies, incompatible Biopython wrappers, and inconsistent database drivers.
-4. **Data Privacy**: Researchers working on proprietary or sensitive sequences often cannot upload unreleased genetic data to opaque public cloud web tools.
+BioInsight AI 2.0 unifies these disparate workflows into a single, high-performance platform running natively on local workstations or private institutional servers. It combines:
+1. **Parallel Federated Querying**: Concurrently queries 11 authoritative biological databases in parallel with partial failure tolerance.
+2. **Deterministic Local Computing**: Sequence translations, alignments, physicochemical metrics, and Lipinski rule evaluations execute locally using Biopython, RDKit, and NumPy.
+3. **Native AutoDock Vina Molecular Docking**: Real in silico protein–ligand docking executed via native C++ binaries with RDKit conformer minimization, Meeko torsion trees, and 3D WebGL contact visualization.
+4. **Data Isolation & Traceability**: Clear evidence provenance tagging, PostgreSQL persistent job tracking, and publication-ready PDF/DOCX reporting.
 
 ---
 
-## 3. The Solution & Value Proposition
+## 2. Target Audience & Key Benefits
 
-BioInsight AI solves these issues through a clean, unified architecture:
-- **Centralized Workflows**: Search genes, inspect UniProt proteins, calculate sequence metrics, perform translations across 6 reading frames, align pairs, and query NCBI BLAST from a single interface.
-- **Explicit Evidence Categorization**: Structural data explicitly separates experimental PDB coordinates (resolution, deposition method) from computational AlphaFold predictions (pLDDT confidence scores).
-- **One-Command Local Setup**: Robust PowerShell and Python setup automation provisions isolated virtual environments, configures PostgreSQL databases safely, and runs migrations without manual friction.
-- **Local Computational Pipeline**: Sequence transformations, composition analyses, and alignments execute locally in-memory using Biopython and NumPy.
+| User Group | Primary Use Cases | Key Benefits in BioInsight AI 2.0 |
+|---|---|---|
+| **Medicinal Chemists** | Small-molecule screening, Lipinski druglikeness, protein–ligand docking | Real AutoDock Vina docking scores ($\Delta G$), 3D pose cycling, and interaction contact profiling. |
+| **Computational Biologists** | Sequence analysis, 6-frame translation, pairwise alignment, BLAST | Local Biopython algorithms; no rate limits or data leakage for proprietary sequences. |
+| **Genomics & Proteomics Researchers** | Target discovery, functional annotations, genomic coordinate mapping | Federated search across UniProtKB, NCBI, Ensembl, and Open Targets in a single view. |
+| **Structural Biologists** | PDB structures, AlphaFold models, binding cavity geometry | 3D WebGL rendering with 3Dmol.js; transparent separation between experimental PDB and predicted AlphaFold data. |
+| **Academic Educators & Students** | Teaching structural bioinformatics and drug design | Turnkey setup without Docker; interactive visual feedback for chemical and macromolecular principles. |
 
 ---
 
-## 4. Core Features & Capabilities
+## 3. Core Platform Features
 
-### A. Gene Intelligence (`/genes`)
-- **Multi-Source Gene Search**: Search by official symbol (e.g., `BRCA1`, `TP53`, `EGFR`), full gene name, or alias using MyGene.info and NCBI Entrez.
+### A. Dynamic Scientific Database Hub (`/databases`)
+- **Federated Parallel Querying**: Concurrently queries **11 authoritative biological databases**: RCSB PDB, UniProtKB, PubChem, NCBI Entrez, PDBe, AlphaFold DB, ChEMBL, Europe PMC, Open Targets, Ensembl, and Reactome.
+- **Resilient Execution**: Non-blocking `asyncio.gather` with partial failure tolerance—unresponsive external services do not interrupt healthy connectors.
+- **Domain Categorization**: Results grouped into Macromolecules, Sequences, Chemistry & Drugs, Diseases & Literature, and Pathways & Targets.
+- **Raw Inspection**: Normalized search metadata, external outbound links, and raw JSON modal inspection.
+
+### B. AutoDock Vina Molecular Docking Platform (`/docking`)
+- **Native Scripps AutoDock Vina v1.2.5**: High-performance local docking execution natively on Windows, Linux, and macOS without Docker.
+- **Cheminformatics Preparation Pipeline**:
+  - **Receptor**: Biopython parsing, crystallographic water removal, heteroatom filtering, and AutoDock PDBQT formatting.
+  - **Ligand**: RDKit ETKDGv3 3D conformer generation from canonical SMILES, Universal Force Field (UFF) energy minimization, Gasteiger partial charges, and Meeko torsion tree conversion.
+- **Three Search Space Modes**:
+  - Bound ligand centroid with adjustable bounding padding ($4.0 - 10.0\,\text{\AA}$).
+  - Catalytic/active residue selection with automated bounding box calculation.
+  - Full manual coordinate specification ($X, Y, Z$ center and box dimensions).
+- **Interatomic Contact Classification**: Euclidean distance geometric profiling identifying hydrogen bonds ($\le 3.5\,\text{\AA}$), hydrophobic interactions ($\le 4.0\,\text{\AA}$), and electrostatic salt bridges ($\le 4.0\,\text{\AA}$).
+- **Interactive 3D WebGL Visualization**: Embedded 3Dmol.js viewer rendering secondary structure cartoons, ligand stick conformers, wireframe bounding box, and colored 3D interatomic contact lines.
+- **Background Worker & Resilience**: Jobs processed in a background thread pool with automatic startup reconciliation for interrupted jobs.
+- **Publication-Ready Docking Reports**: One-click PDF and DOCX export with parameters, ranked binding poses table, active site contact profile, methodology, and citations.
+
+### C. Gene Intelligence (`/genes`)
+- **Multi-Source Gene Search**: Search by official symbol (e.g., `BRCA1`, `TP53`, `EGFR`), full name, or alias using MyGene.info and NCBI Entrez.
 - **Comprehensive Annotation**: View chromosomal coordinates, genomic locations, Ensembl identifiers, Entrez Gene IDs, and curated summaries.
-- **Smart Database Caching**: High-throughput queries are cached in PostgreSQL (`gene_cache` table) with retrieval timestamps and transparent cache-hit indicators.
+- **Database Caching**: High-throughput queries are cached in PostgreSQL (`gene_cache` table) with retrieval timestamps.
 
-### B. Protein Intelligence (`/proteins`)
-- **UniProtKB Accession & Keyword Search**: Query UniProtKB with organism filtering (e.g., `Homo sapiens`).
+### D. Protein Intelligence (`/proteins`)
+- **UniProtKB Accession & Keyword Search**: Query UniProtKB with organism filtering (*Homo sapiens*).
 - **Functional Annotation**: Access recommended protein names, gene associations, biological functions, subcellular localizations, and external database cross-references.
-- **Physicochemical Properties**: Real-time computational analysis via Biopython:
+- **Physicochemical Properties**: Real-time computational analysis via Biopython `ProtParam`:
   - Molecular weight ($Da$)
   - Theoretical Isoelectric Point ($pI$)
   - Instability Index (in vivo stability classification)
@@ -85,352 +104,220 @@ BioInsight AI solves these issues through a clean, unified architecture:
 - **Dual Structural Perspective**:
   - **Experimental Structures**: RCSB PDB cross-references with experimental determination methods (X-ray, NMR, Cryo-EM) and resolutions.
   - **Computational Predictions**: AlphaFold DB accessions with prediction confidence scores.
-- **Local Caching**: Responses are stored in PostgreSQL (`protein_cache` table) with explicit bypass support (`force_refresh=true`).
 
-### C. Sequence Laboratory (`/sequences`)
+### E. Sequence Laboratory (`/sequences`)
 - **Multi-Type Sequence Validation**: Validates DNA, RNA, and amino acid sequences with full support for IUPAC ambiguity characters.
 - **Physicochemical Metrics**: Calculates length, nucleotide composition, GC content, AT content, and CpG dinucleotide counts.
-- **Biological Transformations**:
-  - Reverse complement
-  - Transcription (DNA $\rightarrow$ RNA)
-  - Back-transcription (RNA $\rightarrow$ DNA)
+- **Biological Transformations**: Reverse complement, transcription (DNA $\rightarrow$ RNA), and back-transcription (RNA $\rightarrow$ DNA).
 - **Multi-Frame Translation**: Translates sequences across reading frames (+1, +2, +3, -1, -2, -3, or all six simultaneously) with configurable standard and vertebrate mitochondrial genetic codes.
 - **Pairwise Alignment**:
   - Global alignment (Needleman-Wunsch algorithm)
   - Local alignment (Smith-Waterman algorithm)
   - Customizable match score, mismatch penalty, and open/extend gap costs.
-- **NCBI BLAST Integration**:
-  - Asynchronous submission to NCBI QBlast server (`blastn`, `blastp`).
-  - Safe background status polling (`WAITING`, `READY`, `FAILED`).
-  - Structured extraction of top hits: accession, title, E-value, bit score, and query coverage.
-- **FASTA File Ingestion**: Upload multi-record FASTA files (up to 2 MiB) with automatic header and sequence parsing.
+- **NCBI BLAST Integration**: Asynchronous submission to NCBI QBlast server (`blastn`, `blastp`) with structured hit extraction.
+- **FASTA File Ingestion**: Upload multi-record FASTA files (up to 25 MiB) with automatic header and sequence parsing.
 
-### D. Disease Intelligence (`/diseases`)
+### F. Disease Intelligence (`/diseases`)
 - **Open Targets Platform**: Query disease targets, therapeutic areas, and clinical phenotype associations.
 - **Europe PMC Literature**: Search peer-reviewed biomedical literature and PubMed identifiers directly associated with the disease.
 - **PostgreSQL Caching**: Search results and entity details cached in `disease_cache` table.
 
-### E. Drug & Compound Intelligence (`/compounds`)
+### G. Drug & Compound Intelligence (`/compounds`)
 - **PubChem PUG REST API**: Query chemical compounds by name, CID, or SMILES.
 - **Physicochemical Properties**: Molecular weight, canonical SMILES, InChIKey, XLogP, TPSA, H-bond donors/acceptors, rotatable bonds.
 - **Lipinski's Rule of 5**: Evaluates small-molecule oral druglikeness (MW $\le 500$, LogP $\le 5.0$, H-donors $\le 5$, H-acceptors $\le 10$).
 - **ChEMBL Cross-References**: Pharmacological mechanisms of action, clinical indications, and biological targets.
 - **3D Conformer Download**: Export standard 3D SDF coordinate files and 2D chemical structure diagrams.
 
-### F. Macromolecular Structure Explorer (`/structures`)
+### H. Macromolecular Structure Explorer (`/structures`)
 - **Experimental Structures (RCSB PDB)**: Resolution, experimental determination method (X-ray, cryo-EM, NMR), polymer chains, and bound ligands.
 - **Computational Predictions (AlphaFold DB)**: Whole-organism deep-learning structure predictions with per-residue pLDDT confidence categories.
 - **3D WebGL Visualization**: Embedded 3Dmol.js viewer supporting cartoon, stick, sphere, and solvent-accessible surface representations with spectrum and chain coloring.
 - **Atomic Coordinate Export**: Download raw `.pdb` files for molecular modeling.
 
-### G. Protein-Ligand Interaction & Docking Laboratory (`/interactions`)
+### I. Binding Interaction Analysis (`/interactions`)
 - **Hetero-Residue Ligand Extraction**: Automatically isolates non-water bound co-factors, drugs, and prosthetic groups (e.g. HEM, STI, ATP).
-- **3D Atomic Distance Matrix**: Biopython Euclidean distance calculations between ligand and macromolecular binding residues within a configurable radius ($2.5 - 7.0\,\text{Å}$).
+- **3D Atomic Distance Matrix**: Biopython Euclidean distance calculations between ligand and macromolecular binding residues within a configurable radius ($2.5 - 7.0\,\text{\AA}$).
 - **Contact Classification**: Identifies hydrogen bonds, hydrophobic interactions, salt bridges, and van der Waals contacts.
-- **Binding Pocket Geometry**: Pocket centroid coordinates ($X, Y, Z$), radius, and estimated cavity volume ($\text{Å}^3$).
-- **Empirical Affinity Scoring**: Estimated binding free energy ($\Delta G$ in $\text{kcal/mol}$) and interaction quality index.
+- **Binding Pocket Geometry**: Pocket centroid coordinates ($X, Y, Z$), radius, and estimated cavity volume ($\text{\AA}^3$).
 
-### H. Research Project Management (`/projects`)
-- **Multi-Project Workspace**: Create and organize multi-omics research projects.
-- **Cross-Entity Bookmarking**: Save genes, proteins, compounds, diseases, 3D structures, and custom notes directly into projects.
-- **Audit Logging**: Comprehensive activity stream recording every bookmark, note, and update.
-
-### I. Multi-User Authentication & Security (`/login`, `/register`)
-- **Secure Registration & Login**: User identity management with Argon2 password hashing (`argon2-cffi` + `pwdlib`).
+### J. Multi-User Authentication & Research Workspaces (`/login`, `/register`, `/projects`)
+- **Identity Management**: User registration and login with Argon2 password hashing (`argon2-cffi` + `pwdlib`).
 - **Stateless JWT Authorization**: Signed tokens (HS256) propagated via `Authorization: Bearer` headers.
-- **Tenant Data Isolation**: Research projects and saved datasets are strictly isolated per authenticated user.
+- **Research Project Workspaces**: Organize findings, bookmark entities (genes, proteins, compounds, structures), and record activity streams with strict per-user data isolation.
 
-### J. Grounded AI Research Assistant (`/assistant`)
-- **Evidence-Grounded Intelligence**: Synthesizes real biological facts from local PostgreSQL caches and authoritative APIs (MyGene, UniProt, PubChem, Open Targets).
-- **Verifiable Citations**: Every generated finding includes database sources, accession identifiers, and outbound links.
-- **Zero Hallucination Policy**: Refuses to speculate or invent biological targets or sequences.
-
-### K. Publication-Grade Research Report Generator (`/reports`)
-- **PDF Generation via ReportLab**: Generates clean, publication-grade research reports with executive summaries, structured tables, and references.
-- **Microsoft Word DOCX via python-docx**: Generates editable Word documents for collaboration and grant applications.
-- **Project Dataset Export**: One-click complete project dossier exports.
-
-### L. Dynamic Scientific Database Hub (`/databases`)
-- **Federated Parallel Querying**: Concurrently queries 11 authoritative biological databases in parallel: RCSB PDB, UniProtKB, PubChem, NCBI Entrez, PDBe, AlphaFold DB, ChEMBL, Europe PMC, Open Targets, Ensembl, and Reactome.
-- **Resilient Execution**: Non-blocking `asyncio.gather` with partial failure tolerance—unresponsive external services do not interrupt healthy connectors.
-- **Categorized Results**: Grouped by biological domain: Macromolecules, Sequences, Chemistry & Drugs, Diseases & Literature, and Pathways & Targets.
-- **Provenance & Inspection**: Complete normalized search metadata with direct external database links and full raw JSON modal inspection.
-
-### M. Molecular Docking Platform (`/docking`)
-- **Native AutoDock Vina v1.2.5 Engine**: Zero-dependency local docking execution natively on Windows, Linux, and macOS without Docker.
-- **Cheminformatics Preparation Pipeline**:
-  - **Receptor**: Biopython parsing, crystallographic water removal, alternate conformation filtering, and AutoDock PDBQT formatting.
-  - **Ligand**: RDKit ETKDGv3 3D conformer generation from canonical SMILES, Universal Force Field (UFF) energy minimization, Gasteiger partial charges, and Meeko torsion tree conversion.
-- **Three Search Space Modes**:
-  - Bound ligand centroid with adjustable padding ($4.0 - 10.0\,\text{Å}$).
-  - Catalytic/active residue selections with automated bounding box calculation.
-  - Full manual coordinate specification ($X, Y, Z$ center and box dimensions).
-- **Interatomic Contact Classification**: Euclidean distance geometric profiling identifying hydrogen bonds ($\le 3.5\,\text{Å}$), hydrophobic interactions ($\le 4.0\,\text{Å}$), and electrostatic salt bridges ($\le 4.0\,\text{Å}$).
-- **Interactive 3D WebGL Visualization**: Embedded 3Dmol.js viewer rendering secondary structure cartoons, ligand stick conformers, wireframe bounding box, and colored 3D interatomic contact lines.
-- **Persistent Job History**: Track and re-inspect past docking jobs stored in PostgreSQL (`docking_jobs` and `docking_poses`).
-- **Publication-Ready Docking Reports**: One-click PDF and DOCX export with parameters, ranked binding poses table, active site contact profile, methodology, and citations.
-
-### N. System Diagnostics & Dashboard (`/`, `/api-test`)
-- **Operational Monitoring**: Real-time round-trip latency checks for both FastAPI backend and PostgreSQL database.
-- **Diagnostic Inspector**: Direct JSON inspection of API health endpoints.
+### K. Publication-Grade Research Reports (`/reports` & `/docking`)
+- **PDF Generation via ReportLab**: Clean, publication-grade research reports with executive summaries, structured tables, and references.
+- **Microsoft Word DOCX via python-docx**: Editable Word documents for collaboration and grant applications.
+- **Project Dossier Export**: One-click complete project dataset exports.
 
 ---
 
-## 5. Technology Stack
-
-### Backend
-- **Language**: Python 3.12
-- **Framework**: FastAPI 0.162 (Asynchronous ASGI)
-- **Validation**: Pydantic 2.x
-- **Database ORM**: SQLAlchemy 2.x
-- **Database Driver**: `psycopg` (Version 3)
-- **Database Migrations**: Alembic 1.20
-- **Docking Engine**: Scripps AutoDock Vina v1.2.5 (Native binary execution)
-- **Cheminformatics**: RDKit 2026.9, Meeko 0.8, Gemmi 0.7.5
-- **Scientific Computing**: Biopython 1.88, NumPy 2.x, SciPy 1.18
-- **Authentication**: Argon2 (`pwdlib`, `argon2-cffi`), PyJWT
-- **Report Generation**: ReportLab 5.1 (PDF), python-docx 1.2 (DOCX)
-- **HTTP Client**: HTTPX 0.28 (Async connection pooling)
-- **ASGI Server**: Uvicorn 0.54
-
-### Frontend
-- **Framework**: Next.js 16.4.4 (App Router, Turbopack)
-- **Library**: React 19.3.0
-- **Language**: TypeScript 5.x (Strict mode)
-- **Styling**: Tailwind CSS 4, Lucide React icons
-- **3D Molecular Viewing**: 3Dmol.js (WebGL rendering for ribbons, sticks, surfaces, wireframes, and contact vectors)
-- **Components**: Radix UI / shadcn design system patterns
-
-### Database & Storage
-- **Database**: PostgreSQL 18.6
-- **Cache & Jobs Persistence**: Relational storage in PostgreSQL (`gene_cache`, `protein_cache`, `disease_cache`, `docking_jobs`, `docking_poses`, `blast_jobs`)
-
----
-
-## 6. Architecture & System Design
-
-### Architecture Diagram
+## 4. System Architecture
 
 ```mermaid
 flowchart TD
     User["Researcher / Client Browser\nhttp://localhost:3000"]
     
-    subgraph Frontend["Next.js 16 App Router (Port 3000)"]
-        Dashboard["Dashboard (/)"]
-        GeneUI["Gene Intel (/genes)"]
-        ProteinUI["Protein Intel (/proteins)"]
-        SeqUI["Sequence Lab (/sequences)"]
-        DockUI["Molecular Docking (/docking)"]
-        DbHubUI["Database Hub (/databases)"]
-        ReportsUI["Reports (/reports)"]
-        ApiClient["Typed API Client\n(src/lib/api.ts)"]
-        Dashboard --> ApiClient
-        GeneUI --> ApiClient
-        ProteinUI --> ApiClient
-        SeqUI --> ApiClient
-        DockUI --> ApiClient
-        DbHubUI --> ApiClient
-        ReportsUI --> ApiClient
+    subgraph Frontend["Next.js 16 Web Application (Port 3000)"]
+        UI_Dashboard["Dashboard (/)"]
+        UI_Hub["Database Hub (/databases)"]
+        UI_Docking["Molecular Docking (/docking)"]
+        UI_Genes["Gene Intelligence (/genes)"]
+        UI_Proteins["Protein Intelligence (/proteins)"]
+        UI_Sequences["Sequence Lab (/sequences)"]
+        UI_Compounds["Compound Explorer (/compounds)"]
+        UI_Structures["3D Structures (/structures)"]
+        UI_Viewer["3Dmol.js WebGL Viewer\n(Ribbons, Sticks, Pockets, Contacts)"]
+        ApiClient["Typed API Client\n(frontend/src/lib/api.ts)"]
+
+        UI_Dashboard --> ApiClient
+        UI_Hub --> ApiClient
+        UI_Docking --> ApiClient
+        UI_Docking --> UI_Viewer
+        UI_Genes --> ApiClient
+        UI_Proteins --> ApiClient
+        UI_Sequences --> ApiClient
+        UI_Compounds --> ApiClient
+        UI_Structures --> ApiClient
+        UI_Structures --> UI_Viewer
     end
 
-    subgraph Backend["FastAPI REST Backend (Port 8000)"]
-        RouterHealth["/health & /health/db"]
-        RouterGenes["/api/v1/genes"]
-        RouterProteins["/api/v1/proteins"]
-        RouterSequences["/api/v1/sequences"]
-        RouterDocking["/api/v1/docking"]
-        RouterDatabases["/api/v1/databases"]
-        RouterReports["/api/v1/reports"]
+    subgraph Backend["FastAPI REST Application (Port 8000)"]
+        RouterAuth["Auth & Users (/api/v1/auth)"]
+        RouterHub["Database Hub (/api/v1/databases)"]
+        RouterDocking["Molecular Docking (/api/v1/docking)"]
+        RouterGenes["Gene Intelligence (/api/v1/genes)"]
+        RouterProteins["Protein Intelligence (/api/v1/proteins)"]
+        RouterSequences["Sequence Lab (/api/v1/sequences)"]
+        RouterReports["Reports Generator (/api/v1/reports)"]
         
-        subgraph ComputationalEngines["Scientific Computational Engines"]
-            VinaEngine["AutoDock Vina Engine\n(vina.exe v1.2.5 Native)"]
-            RDKitPrep["RDKit + Meeko + Gemmi\n(3D Conformer & PDBQT Prep)"]
-            Interactions["Interatomic Contact Classifier\n(H-bonds, Salt bridges, Hydrophobic)"]
-            BioSeq["Biopython Sequence Engine\n(Metrics, Translation, Alignment)"]
-            ReportGen["ReportLab & python-docx Engine"]
+        subgraph BackgroundWorkers["Background Job & Execution Layer"]
+            JobPool["ThreadPoolExecutor (Workers=3)"]
+            Reconciler["Startup Job Reconciler\n(Lifespan Manager)"]
         end
-        
-        RouterDocking --> RDKitPrep
-        RouterDocking --> VinaEngine
-        RouterDocking --> Interactions
-        RouterDocking --> ReportGen
-        RouterDatabases --> FederatedHub["11-Database Connector Registry"]
+
+        subgraph ScientificEngines["Scientific & Computational Core"]
+            VinaExe["Scripps AutoDock Vina v1.2.5\n(Native C++ Binary)"]
+            RDKitMeeko["RDKit ETKDGv3 + Meeko\n(3D Conformer & PDBQT Generator)"]
+            ContactClassifier["Interatomic Contact Classifier\n(H-bonds, Salt bridges, Hydrophobic)"]
+            BiopythonEngine["Biopython 1.88 Engine\n(ProtParam, PDB parser, Aligners)"]
+            ReportLabEngine["ReportLab & python-docx Engine"]
+        end
+
+        subgraph ConnectorHub["11-Database Connector Registry"]
+            ConnRCSB["RCSB PDB"]
+            ConnUniProt["UniProtKB"]
+            ConnPubChem["PubChem"]
+            ConnNCBI["NCBI Entrez"]
+            ConnPDBe["PDBe"]
+            ConnAF["AlphaFold DB"]
+            ConnChEMBL["ChEMBL"]
+            ConnEPMC["Europe PMC"]
+            ConnOT["Open Targets"]
+            ConnEnsembl["Ensembl"]
+            ConnReactome["Reactome"]
+        end
     end
 
-    subgraph StorageLayer["Data & Persistence (PostgreSQL 18)"]
-        PG[("PostgreSQL 18\n(gene_cache, protein_cache,\ndocking_jobs, docking_poses,\nblast_jobs, users, projects)")]
+    subgraph DatabaseLayer["Relational Database (PostgreSQL 18)"]
+        PG_DB[("PostgreSQL 18\n• docking_jobs & docking_poses\n• gene_cache & protein_cache\n• disease_cache & compound_cache\n• blast_jobs\n• users & projects")]
     end
 
-    subgraph ExternalAPIs["11 Authoritative Biological Databases"]
-        PDB["RCSB PDB"]
-        UniProt["UniProtKB"]
-        PubChem["PubChem"]
-        NCBI["NCBI Entrez"]
-        PDBe["PDBe"]
-        AlphaFold["AlphaFold DB"]
-        ChEMBL["ChEMBL"]
-        EPMC["Europe PMC"]
-        OT["Open Targets"]
-        Ensembl["Ensembl"]
-        Reactome["Reactome"]
-    end
-
-    User <--> Frontend
-    ApiClient <-->|HTTP / JSON| Backend
-    FederatedHub <-->|HTTPS Parallel| ExternalAPIs
-    Backend <-->|SQLAlchemy 2.x| StorageLayer
-    Backend <-->|SQLAlchemy + psycopg| PG
-```
-
-### Repository Structure
-
-```text
-bioinsight-ai/
-├── .env.example              # Monorepo environment documentation template
-├── .gitignore                # Git exclusions (secrets, .venv, .next, node_modules)
-├── README.md                 # Master project documentation
-├── backend/
-│   ├── alembic.ini           # Alembic migration configuration
-│   ├── pytest.ini            # Pytest execution settings
-│   ├── requirements.txt      # Direct Python runtime and dev dependencies
-│   ├── app/
-│   │   ├── main.py           # FastAPI application entrypoint & CORS
-│   │   ├── api/v1/           # API version 1 route definitions
-│   │   │   ├── genes.py      # Gene intelligence endpoints
-│   │   │   ├── health.py     # Health and diagnostic checks
-│   │   │   ├── proteins.py   # Protein intelligence endpoints
-│   │   │   └── sequences.py  # Sequence laboratory endpoints
-│   │   ├── bioinformatics/   # Scientific computational modules
-│   │   │   ├── genes/        # MyGene / NCBI services, schemas, and cache
-│   │   │   ├── proteins/     # UniProt / AlphaFold clients & Biopython analyzers
-│   │   │   └── sequences/    # Validation, translation, alignment, BLAST services
-│   │   ├── core/             # Application configuration & Pydantic settings
-│   │   ├── database/         # Database engine, session maker, base model
-│   │   └── models/           # SQLAlchemy ORM models (gene_cache, protein_cache)
-│   ├── migrations/           # Alembic versions and migration environment
-│   └── tests/                # 40 Pytest unit and integration tests
-├── frontend/
-│   ├── package.json          # Node dependencies and build scripts
-│   ├── tsconfig.json         # TypeScript compiler configuration
-│   └── src/
-│       ├── app/              # Next.js 16 App Router pages
-│       │   ├── page.tsx      # Main research dashboard
-│       │   ├── api-test/     # Backend connectivity diagnostic page
-│       │   ├── genes/        # Gene Intelligence UI
-│       │   ├── proteins/     # Protein Intelligence UI
-│       │   └── sequences/    # Sequence Laboratory UI
-│       ├── components/       # UI components (app shell, sidebar, widgets)
-│       └── lib/              # Frontend API client and utility functions
-├── docs/                     # Comprehensive architecture and operation manuals
-├── scripts/                  # Automated PowerShell and Python setup scripts
-└── storage/                  # Local storage placeholders (cache, uploads, reports)
+    User <-->|HTTP / WebGL| Frontend
+    ApiClient <-->|REST JSON / JWT| Backend
+    RouterDocking --> JobPool
+    JobPool --> RDKitMeeko
+    JobPool --> VinaExe
+    JobPool --> ContactClassifier
+    RouterDocking --> ReportLabEngine
+    RouterSequences --> BiopythonEngine
+    RouterHub --> ConnectorHub
+    ConnectorHub <-->|HTTPS Async Pools| ConnRCSB & ConnUniProt & ConnPubChem & ConnNCBI & ConnAF & ConnChEMBL & ConnEPMC & ConnOT & ConnEnsembl & ConnReactome & ConnPDBe
+    Backend <-->|SQLAlchemy 2.x + psycopg3| DatabaseLayer
+    Reconciler -->|Crash / Interruption Recovery| DatabaseLayer
 ```
 
 ---
 
-## 7. Prerequisites & System Requirements
+## 5. Technology Stack
 
-BioInsight AI is developed and validated for **Windows 11** (also compatible with Linux / macOS).
+### Backend Engine
+- **Language**: Python 3.12 (Strict typing)
+- **Web Framework**: FastAPI 0.162.0 (ASGI)
+- **Docking Engine**: Scripps AutoDock Vina v1.2.5 (Native binary execution)
+- **Cheminformatics**: RDKit 2026.9.1, Meeko 0.8.0, Gemmi 0.7.5
+- **Bioinformatics**: Biopython 1.88, NumPy 2.5.4, SciPy 1.18.1
+- **Database ORM**: SQLAlchemy 2.1.6 with PostgreSQL 3 adapter (`psycopg 3.3.7`)
+- **Database Migrations**: Alembic 1.20.1
+- **Security & Cryptography**: Argon2 (`pwdlib`, `argon2-cffi`), PyJWT
+- **Reporting**: ReportLab 5.1.0 (PDF), python-docx 1.2.0 (Word DOCX)
+- **HTTP Client**: HTTPX 0.28.1 (Asynchronous connection pooling)
+- **Server**: Uvicorn 0.54.0
 
-### Required Software
-1. **Operating System**: Windows 11 (64-bit) with PowerShell 5.1 or PowerShell 7+
-2. **Python**: Python 3.12.x with the Python Launcher (`py`) installed and added to `PATH`
-3. **Node.js**: Node.js 20.9.x LTS or higher (with `npm`)
-4. **PostgreSQL**: PostgreSQL 18.x (or 16+) running locally on port 5432
-5. **Git**: Git for Windows
+### Frontend Web Client
+- **Framework**: Next.js 16.4.4 (App Router, Turbopack)
+- **UI Runtime**: React 19.3.0
+- **Language**: TypeScript 5.x (Strict mode)
+- **Styling**: Tailwind CSS 4, Lucide React icons
+- **3D Molecular Graphics**: 3Dmol.js 2.4.2 (WebGL hardware-accelerated rendering)
+- **Components**: Radix UI / Base UI design patterns
 
-You can verify your environment prerequisites automatically by running:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\check_environment.ps1
-```
+### Database & Persistence
+- **Relational Store**: PostgreSQL 18.6 (Port 5432)
+- **Persistent Tables**: `docking_jobs`, `docking_poses`, `gene_cache`, `protein_cache`, `compound_cache`, `disease_cache`, `blast_jobs`, `users`, `projects`
 
 ---
 
-## 8. Git Cloning & Workspace Setup
+## 6. Prerequisites & System Requirements
 
-Clone the repository to your local drive:
+- **Operating System**: Windows 11 (64-bit), Ubuntu 22.04/24.04 LTS, or macOS 14+
+- **Python**: Python 3.12.x (with `pip` and virtual environment support)
+- **Node.js**: Node.js 20.9.x LTS or higher (with `npm`)
+- **PostgreSQL**: PostgreSQL 16.x or 18.x running locally or remotely on port 5432
+- **Git**: Git 2.40+
 
-```powershell
-# Clone the repository
+---
+
+## 7. Step-by-Step Installation & Setup
+
+Follow these exact steps to clone, configure, and execute BioInsight AI 2.0 locally:
+
+### Step 1: Clone the Repository
+```bash
 git clone https://github.com/niranjan867/bioinsight-ai.git
-
-# Navigate into the project root
-Set-Location .\bioinsight-ai
+cd bioinsight-ai
 ```
 
----
+### Step 2: Configure Environment Variables
+Copy the template configuration files:
+```bash
+# Backend configuration
+cp backend/.env.example backend/.env
 
-## 9. PostgreSQL Database Installation & Configuration
-
-BioInsight AI requires a local PostgreSQL instance.
-
-### Step 1: Start PostgreSQL
-Ensure your PostgreSQL Windows service is running (e.g., via Windows Services `services.msc` or `pg_ctl`).
-
-### Step 2: Create Application User and Database
-Open `psql` as the `postgres` superuser:
-
-```powershell
-psql -U postgres
+# Frontend configuration
+cp frontend/.env.example frontend/.env.local
 ```
 
-Execute the following SQL statements:
-
-```sql
--- Create a dedicated application role
-CREATE USER bioinsight_app WITH PASSWORD 'your_secure_password';
-
--- Create the application database owned by the application role
-CREATE DATABASE bioinsight_db OWNER bioinsight_app;
-
--- Grant schema privileges
-GRANT ALL PRIVILEGES ON DATABASE bioinsight_db TO bioinsight_app;
-\connect bioinsight_db
-GRANT ALL ON SCHEMA public TO bioinsight_app;
-\q
-```
-
-### Step 3: Interactive Database Configuration Helper
-You can also use the included Python helper to test and verify your database credentials:
-
-```powershell
-cd backend
-.\.venv\Scripts\python.exe ..\scripts\configure_db.py
-cd ..
-```
-
----
-
-## 10. Environment Variables Configuration
-
-The project uses decoupled configuration files that are strictly excluded from source control:
-
-### Backend Configuration (`backend/.env`)
-Create `backend/.env` from the provided template:
-
-```powershell
-Copy-Item backend\.env.example backend\.env
-```
-
-Edit `backend/.env`:
+Edit `backend/.env` to configure your PostgreSQL credentials:
 ```ini
 APP_NAME=BioInsight AI
 APP_ENV=development
 DEBUG=true
 
-# Database connection string (PostgreSQL with psycopg3 driver)
-DATABASE_URL=postgresql+psycopg://bioinsight_app:your_secure_password@127.0.0.1:5432/bioinsight_db
+# Database connection URL (PostgreSQL with psycopg3 driver)
+DATABASE_URL=postgresql+psycopg://bioinsight_app:your_password@127.0.0.1:5432/bioinsight_db
 
-# Security & Tokens
-JWT_SECRET_KEY=generate_a_random_secret_key_here
+# Security
+JWT_SECRET_KEY=replace_with_a_secure_random_key_min_32_chars
 JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACCESS_TOKEN_EXPIRE_MINUTES=60
 
-# File Storage Limits
+# File Storage
 STORAGE_PATH=../storage
 MAX_UPLOAD_SIZE_MB=25
 
-# Allowed CORS Origin
+# CORS Allowed Origin
 FRONTEND_URL=http://localhost:3000
 
 # NCBI Contact (Required for NCBI BLAST queries)
@@ -438,193 +325,264 @@ NCBI_EMAIL=your-email@example.org
 NCBI_TOOL=BioInsightAI
 ```
 
-### Frontend Configuration (`frontend/.env.local`)
-Create `frontend/.env.local` from the provided template:
+### Step 3: Set Up PostgreSQL Database
+Open `psql` as administrator:
+```sql
+CREATE USER bioinsight_app WITH PASSWORD 'your_password';
+CREATE DATABASE bioinsight_db OWNER bioinsight_app;
+GRANT ALL PRIVILEGES ON DATABASE bioinsight_db TO bioinsight_app;
+\connect bioinsight_db
+GRANT ALL ON SCHEMA public TO bioinsight_app;
+\q
+```
 
+### Step 4: Set Up Backend Python Environment
+```bash
+cd backend
+
+# Create Python 3.12 virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+# Linux / macOS:
+# source .venv/bin/activate
+
+# Install required backend dependencies
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# Apply Alembic database migrations
+alembic upgrade head
+
+cd ..
+```
+
+### Step 5: Set Up Frontend Node Environment
+```bash
+cd frontend
+
+# Install Node.js dependencies
+npm install
+
+cd ..
+```
+
+### Step 6: Start the Application
+
+**Option A — Automated Launch (Windows PowerShell):**
 ```powershell
-Copy-Item frontend\.env.example frontend/.env.local
+powershell -ExecutionPolicy Bypass -File .\scripts\start_all.ps1
 ```
 
-Edit `frontend/.env.local`:
-```ini
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+**Option B — Independent Manual Terminals:**
 
----
-
-## 11. Backend Startup & Operation
-
-### Automated Setup
-To automatically create the Python virtual environment, install dependencies, and run database migrations:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\setup.ps1
-```
-
-### Manual Startup
-To run the backend independently:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\start_backend.ps1
-```
-
-Or from the command line:
+*Terminal 1 (Backend):*
 ```powershell
 cd backend
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend exposes:
-- **Health Check**: `http://127.0.0.1:8000/health`
-- **Database Diagnostic**: `http://127.0.0.1:8000/api/v1/health/db`
-- **Interactive OpenAPI Documentation**: `http://127.0.0.1:8000/docs`
-
----
-
-## 12. Frontend Startup & Operation
-
-### Manual Startup
-To run the Next.js development server:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\start_frontend.ps1
-```
-
-Or from the command line:
+*Terminal 2 (Frontend):*
 ```powershell
 cd frontend
 npm run dev
 ```
 
-Visit the application at:
-- **Main Dashboard**: `http://localhost:3000`
-- **Gene Intelligence**: `http://localhost:3000/genes`
-- **Protein Intelligence**: `http://localhost:3000/proteins`
-- **Sequence Laboratory**: `http://localhost:3000/sequences`
-- **API Diagnostics**: `http://localhost:3000/api-test`
-
-### Start Both Services Simultaneously
-To launch both backend and frontend servers in independent PowerShell windows:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\start_all.ps1
-```
+Open your browser at **`http://localhost:3000`**.
+Interactive OpenAPI documentation is available at **`http://127.0.0.1:8000/docs`**.
 
 ---
 
-## 13. Testing & Verification Guide
+## 8. AutoDock Vina Configuration & Docking Walkthrough
 
-BioInsight AI includes an extensive automated test suite with full coverage across all implemented features.
+### Vina Binary Setup
+BioInsight AI bundles the official Scripps AutoDock Vina v1.2.5 Windows binary at `backend/bin/vina.exe`.
 
-### Run All Backend Tests (Pytest)
-```powershell
+- **Windows**: Ready out of the box (bundled binary).
+- **Linux**: Download the Scripps binary and mark executable:
+  ```bash
+  curl -L -o backend/bin/vina https://github.com/ccsb-scripps/AutoDock-Vina/releases/download/v1.2.5/vina_1.2.5_linux_x86_64
+  chmod +x backend/bin/vina
+  ```
+- **macOS**: Install via Homebrew:
+  ```bash
+  brew install vina
+  ```
+
+### End-to-End Docking Example (Reference Complex 1HSG)
+
+You can run an end-to-end molecular docking experiment in the `/docking` module:
+
+1. **Step 1: Select Target Protein**
+   - Source: `RCSB PDB`
+   - Identifier: `1HSG` (HIV-1 Protease with bound inhibitor Amprenavir)
+   - Click **Prepare Receptor**. BioInsight AI strips crystallographic waters, checks peptide chains A & B (198 residues), and formats polar hydrogens.
+2. **Step 2: Define Small-Molecule Ligand**
+   - Source: `SMILES`
+   - SMILES Input: `CC(C)CN(CC(O)C(Cc1ccccc1)NC(=O)OC1CCOC1)S(=O)(=O)c1ccc(N)cc1` (Amprenavir)
+   - Click **Prepare Ligand**. RDKit generates a 3D conformer with UFF minimization and Meeko exports 13 active rotatable torsions.
+3. **Step 3: Define Binding Pocket**
+   - Mode: `Bound Ligand` (Selects co-crystallized ligand `MK1`)
+   - Centroid calculated: $X=11.63, Y=22.47, Z=5.86\,\text{\AA}$
+   - Dimensions: $24.9 \times 20.2 \times 18.6\,\text{\AA}$
+4. **Step 4: Launch AutoDock Vina**
+   - Exhaustiveness: `8` | Number of Modes: `5`
+   - Click **Launch Molecular Docking**.
+   - AutoDock Vina computes poses (~30–35s).
+5. **Step 5: Inspect Results & 3D Visualization**
+   - Mode 1: **$-8.21\,\text{kcal/mol}$** binding affinity.
+   - 3D Viewer renders cartoon receptor, stick pose, wireframe pocket, and dashed interatomic contact lines (H-bonds to `GLY27:B` at $3.46\,\text{\AA}$, flap contacts to `ILE50:B` at $3.54\,\text{\AA}$).
+   - Click **Export Report (PDF)** or **Export Report (DOCX)** for publication-grade dossiers.
+
+---
+
+## 9. Environment Variable Configuration
+
+Decoupled environment templates prevent secret leaks:
+
+### Backend Variables (`backend/.env`)
+
+| Variable | Required | Default | Description |
+|---|:---:|---|---|
+| `APP_NAME` | No | `BioInsight AI` | Display name of the application |
+| `APP_ENV` | No | `development` | Environment mode (`development`, `production`) |
+| `DEBUG` | No | `true` | Enables FastAPI debug logs and diagnostics |
+| `DATABASE_URL` | **Yes** | — | PostgreSQL connection string (`postgresql+psycopg://...`) |
+| `JWT_SECRET_KEY` | **Yes** | — | Secret key used for signing JWT tokens |
+| `JWT_ALGORITHM` | No | `HS256` | JWT signing algorithm |
+| `ACCESS_TOKEN_EXPIRE_MINUTES`| No | `30` | JWT token lifespan in minutes |
+| `FRONTEND_URL` | No | `http://localhost:3000` | Allowed CORS origins (comma-separated for multiple) |
+| `STORAGE_PATH` | No | `../storage` | Path for temporary files and report generation |
+| `NCBI_EMAIL` | Optional | `your-email@example.org`| Contact email for NCBI QBlast queries |
+| `NCBI_TOOL` | Optional | `BioInsightAI` | Tool identifier for NCBI QBlast |
+
+### Frontend Variables (`frontend/.env.local`)
+
+| Variable | Required | Default | Description |
+|---|:---:|---|---|
+| `NEXT_PUBLIC_API_URL` | **Yes** | `http://127.0.0.1:8000` | Primary URL of the FastAPI backend |
+| `NEXT_PUBLIC_API_BASE_URL`| No | `http://127.0.0.1:8000` | Compatibility fallback for backend URL |
+| `NEXT_PUBLIC_APP_URL` | No | `http://localhost:3000` | Public client web address |
+
+---
+
+## 10. Running Automated Tests
+
+BioInsight AI 2.0 maintains a comprehensive automated testing suite:
+
+```bash
+# 1. Python Syntax & Bytecode Compilation
 cd backend
-.\.venv\Scripts\pytest.exe -v
-```
-*Current status*: **40 passed** in ~0.78s across 6 test modules:
-- `test_config.py` (3 tests)
-- `test_database.py` (3 tests)
-- `test_health.py` (5 tests)
-- `test_genes.py` (7 tests)
-- `test_proteins.py` (10 tests)
-- `test_sequences.py` (12 tests)
+python -m compileall app tests migrations
 
-### Run Code Linter (Ruff)
-```powershell
-cd backend
-.\.venv\Scripts\ruff.exe check app tests migrations
-```
-*Current status*: **0 errors**.
+# 2. Python Code Quality & Linting
+ruff check app tests migrations
 
-### Run Database Migration Verification (Alembic)
-```powershell
-cd backend
-.\.venv\Scripts\alembic.exe check
-```
-*Current status*: `No new upgrade operations detected`.
+# 3. Database Migration Integrity
+alembic check
 
-### Run Frontend Static Type Checking & Linting
-```powershell
-cd frontend
+# 4. Run Pytest Suite (94 Unit & Integration Tests)
+pytest -v
+
+# 5. Frontend TypeScript Verification
+cd ../frontend
 npx tsc --noEmit
-npm run lint
-```
-*Current status*: **0 errors / 0 warnings**.
 
-### Production Frontend Build
-```powershell
-cd frontend
+# 6. Frontend Code Linting
+npm run lint
+
+# 7. Frontend Production Build (Turbopack)
 npm run build
 ```
-*Current status*: Compiled successfully; all 20 routes generated cleanly with zero errors.
 
 ---
 
-## 14. Scientific Data Sources & Methodology
+## 11. Supported Production Deployment Architecture
 
-| Biological Source / Method | Role in BioInsight AI 2.0 | Provenance & Engine Policy |
-|---|---|---|
-| **AutoDock Vina v1.2.5** | Native molecular docking & binding affinity scoring | Deterministic Scripps Vina scoring function executed natively. |
-| **RDKit ETKDGv3 & UFF** | Small molecule 3D conformer generation & minimization | Standard distance-geometry algorithm with Universal Force Field. |
-| **Meeko** | Ligand PDBQT preparation with flexible torsion tree | Official Forli lab preparation for AutoDock Vina. |
-| **Biopython PDB & Gemmi** | Macromolecular receptor parsing & coordinate cleaning | Crystallographic water removal & polar hydrogen management. |
-| **11-Database Hub** | Federated multi-omics query platform | RCSB PDB, UniProt, PubChem, NCBI, PDBe, AlphaFold, ChEMBL, Europe PMC, Open Targets, Ensembl, Reactome. |
-| **MyGene.info REST API** | Gene search, symbol lookup, genomic coordinates | Database annotation; records timestamped and cached. |
-| **NCBI Entrez E-Utilities** | Cross-referencing and gene summaries | Official NCBI Gene IDs and curated summaries. |
-| **UniProtKB REST API** | Protein sequences, functional descriptions, subcellular locations | Primary reference for protein sequence and ontology annotations. |
-| **Biopython `ProtParam`** | Physicochemical properties (MW, pI, instability, GRAVY) | Deterministic local computation using standard biological formulas. |
-| **Biopython `PairwiseAligner`** | Global and local sequence alignment | Deterministic local algorithm (Needleman-Wunsch & Smith-Waterman). |
-| **RCSB PDB** | Experimental 3D structural references | Categorized explicitly as **experimental evidence** with resolution and technique. |
-| **AlphaFold DB** | Predicted 3D structural models | Categorized explicitly as **computational prediction** with model confidence. |
-| **NCBI QBlast** | Remote sequence similarity search (`blastn`, `blastp`) | Remote NCBI asynchronous computation with PostgreSQL job tracking. |
-| **ReportLab & python-docx** | Publication-grade research report generation | In-memory generation of PDF and DOCX reports. |
+> [!NOTE]
+> **No Docker & No Vercel Required**: BioInsight AI 2.0 is designed to run natively on dedicated physical servers or Linux/Windows virtual machines without container overhead or serverless timeout limitations.
 
----
+### Recommended Production Deployment Model
 
-## 15. Operational Status & Verification
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        INTERNET / CLIENTS                              │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │ HTTPS (:443)
+┌──────────────────────────────────▼─────────────────────────────────────┐
+│                       NGINX REVERSE PROXY                              │
+│  • Terminates SSL / TLS                                                │
+│  • Routes /api/*, /docs, /health ─────────► FastAPI (:8000)            │
+│  • Routes /* (HTML, CSS, JS)   ─────────► Next.js Standalone (:3000)   │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+         ┌─────────────────────────┴─────────────────────────┐
+         │                                                   │
+┌────────▼────────────────────────┐ ┌────────────────────────▼───────────┐
+│     FASTAPI BACKEND SERVICE     │ │        NEXT.JS FRONTEND SERVICE    │
+│  • Systemd service (Linux) or   │ │  • Managed via PM2 or Systemd      │
+│    Windows Service              │ │  • Node.js 20 LTS runtime          │
+│  • Uvicorn ASGI with 4 workers  │ │  • Port 3000                       │
+│  • Native AutoDock Vina binary  │ └────────────────────────────────────┘
+│  • Local ThreadPoolExecutor     │
+└────────┬────────────────────────┘
+         │
+┌────────▼────────────────────────┐
+│      POSTGRESQL 18 DATABASE     │
+│  • Local or dedicated cluster   │
+│  • Port 5432                    │
+│  • Connection pool: psycopg3    │
+└─────────────────────────────────┘
+```
 
-BioInsight AI 2.0 is fully completed, production-verified, and independently usable without Docker:
-
-### Fully Operational Modules
-- **Dynamic Scientific Database Hub** (`/databases`): 11 live connectors with parallel query dispatch and partial failure tolerance.
-- **Molecular Docking Platform** (`/docking`): End-to-end AutoDock Vina docking, RDKit 3D conformer generation, 3 pocket selection modes, interaction contact classifier, 3Dmol.js viewer, and PostgreSQL job history.
-- **Publication Research Reports** (`/reports` & `/docking`): Dynamic PDF and DOCX downloads with ranked poses and interatomic contacts.
-- **Gene Intelligence** (`/genes`): Symbol search, genomic coordinates, Ensembl/Entrez references, and PostgreSQL caching.
-- **Protein Intelligence** (`/proteins`): UniProtKB annotations, Biopython physicochemical metrics, and PDB/AlphaFold cross-references.
-- **Sequence Laboratory** (`/sequences`): DNA/RNA/protein validation, GC content, transcription, 6-frame translation, Needleman-Wunsch/Smith-Waterman alignment, and NCBI BLAST.
-- **Disease Intelligence** (`/diseases`): Open Targets therapeutic targets and Europe PMC literature links.
-- **Drug & Compound Intelligence** (`/compounds`): PubChem PUG REST, Lipinski Rule of 5 druglikeness, ChEMBL targets, and 3D SDF downloads.
-- **Macromolecular Structure Explorer** (`/structures`): PDB and AlphaFold 3D coordinates rendered with 3Dmol.js.
-- **Protein-Ligand Interactions** (`/interactions`): Direct active-site distance matrix and hetero-atom extraction.
-- **Research Project Management** (`/projects`): Persistent multi-omics workspaces, entity bookmarks, and activity streams.
-- **Multi-User Authentication** (`/login`, `/register`): Argon2 password hashing and stateless JWT bearer security.
-- **Grounded AI Assistant** (`/assistant`): Zero-hallucination scientific assistant synthesizing local cached facts and authoritative APIs.
-
-### Test Coverage Baseline
-- **Backend**: **94 passed** unit and integration tests (`pytest backend/tests/ -v`).
-- **Backend Lint**: **0 errors** (`ruff check backend/app backend/tests`).
-- **Frontend Typecheck**: **0 errors** (`npx tsc --noEmit`).
-- **Frontend Lint**: **0 errors / 0 warnings** (`npm run lint`).
-- **Production Build**: **20 routes compiled cleanly** (`npm run build`).
+1. **Frontend Hosting**: Next.js production build (`npm run build && npm run start` or `node .next/standalone/server.js`) managed by **PM2** or **systemd** on Node.js 20 LTS.
+2. **Backend Hosting**: FastAPI running under **Uvicorn** with multi-worker concurrency (`uvicorn app.main:app --workers 4 --host 127.0.0.1 --port 8000`) managed by **systemd** or Windows Services.
+3. **Database Hosting**: PostgreSQL 16 or 18 instance with persistent storage, automated backups, and indexed caching tables.
+4. **Docking Background Workers**: Handled natively within the FastAPI backend via Python `ThreadPoolExecutor` and isolated temporary disk directories (`tempfile.TemporaryDirectory`). Interrupted jobs are automatically recovered on service restart.
+5. **Reverse Proxy & TLS**: **Nginx** handles SSL termination, static file compression, and reverse proxies requests to Next.js (`:3000`) and FastAPI (`:8000`).
 
 ---
 
-## Documentation Links
+## 12. Scientific Reproducibility & Responsibility
 
-For further architectural and operational details, consult the `docs/` directory:
-- [Windows Setup for New Developers](docs/FRIEND_SETUP_GUIDE.md)
-- [System Architecture](docs/ARCHITECTURE.md)
-- [API Reference](docs/API_REFERENCE.md)
-- [Scientific Data Sources](docs/SCIENTIFIC_DATA_SOURCES.md)
-- [Testing & Quality Gates](docs/TESTING.md)
+To guarantee scientific rigor, BioInsight AI 2.0 maintains transparent separation between empirical data and computational predictions:
+
+1. **Direct Authoritative Data**: Retrieved live from official REST APIs (UniProt sequences, RCSB crystal structures, NCBI genomic loci, PubChem SMILES).
+2. **Deterministic Computations**: Calculated locally using standard peer-reviewed formulas (Biopython ProtParam MW/pI/GRAVY, Needleman-Wunsch sequence alignments, Lipinski Rule of 5).
+3. **Computational Predictions**: In silico estimates subject to force-field and modeling approximations (AlphaFold pLDDT scores, AutoDock Vina $\Delta G$ binding energies).
+
+### In Silico Docking Disclaimer
+
+> [!IMPORTANT]
+> AutoDock Vina binding scores ($\text{kcal/mol}$) are **computational estimates** of protein–ligand interaction potentials. They do **not** replace in vitro or in vivo experimental binding assays (e.g., ITC, SPR, IC50 measurements) and do **not** constitute proof of pharmacological efficacy or clinical safety.
+
+---
+
+## 13. Scientific Attribution & Third-Party Licenses
+
+BioInsight AI 2.0 complies fully with open-science attribution guidelines and open-source licenses:
+
+- **Scientific Data Sources**: For exhaustive citations, API documentation, rate limits, and database terms of use for all 11 biological sources, refer to [`docs/DATA_SOURCES_AND_ATTRIBUTION.md`](docs/DATA_SOURCES_AND_ATTRIBUTION.md).
+- **Third-Party Software & Licenses**: For the complete audit of external software packages, versions, licenses (SPDX), and the AutoDock Vina Apache 2.0 notice, refer to [`docs/THIRD_PARTY_LICENSES.md`](docs/THIRD_PARTY_LICENSES.md).
+
+---
+
+## 14. Documentation Links
+
+- [Scientific Data Sources & Attribution Guide](docs/DATA_SOURCES_AND_ATTRIBUTION.md)
+- [Third-Party Software & Licenses (SBOM)](docs/THIRD_PARTY_LICENSES.md)
+- [Testing & Quality Gates Manual](docs/TESTING.md)
+- [System Architecture Specification](docs/ARCHITECTURE.md)
+- [API Reference Manual](docs/API_REFERENCE.md)
+- [Production Deployment Audit Report](docs/PRODUCTION_DEPLOYMENT_AUDIT.md)
 - [Security & Privacy Guide](docs/SECURITY.md)
-- [Troubleshooting Manual](docs/TROUBLESHOOTING.md)
-- [Current Repository Audit](docs/PROJECT_AUDIT.md)
-- [Development Progress](docs/DEVELOPMENT_PROGRESS.md)
-- [Final Project Report](docs/FINAL_PROJECT_REPORT.md)
+- [Developer Setup Guide](docs/FRIEND_SETUP_GUIDE.md)
 
 ---
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is open-source software licensed under the **[MIT License](LICENSE)**.
+Scripps AutoDock Vina is licensed under the **Apache License 2.0**.
