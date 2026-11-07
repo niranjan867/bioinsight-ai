@@ -6,7 +6,7 @@
 [![React 19](https://img.shields.io/badge/React-19.3-blue.svg)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.6-blue.svg)](https://www.postgresql.org/)
 [![Biopython](https://img.shields.io/badge/Biopython-1.88-green.svg)](https://biopython.org/)
-[![Tests](https://img.shields.io/badge/tests-65%20passed-brightgreen.svg)](docs/TESTING.md)
+[![Tests](https://img.shields.io/badge/tests-77%20passed-brightgreen.svg)](docs/TESTING.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 BioInsight AI is a modern, local-first bioinformatics research platform built for life scientists, computational biologists, and researchers. It integrates gene exploration, protein characterization, and sequence analysis into a unified, high-performance workspace with explicit scientific provenance.

@@ -45,19 +45,19 @@ npm run build
 
 ### Backend Test Suite (Pytest 9.2.0)
 
-- **Total Test Cases**: 65
-- **Passed**: 65 (100%)
+- **Total Test Cases**: 77
+- **Passed**: 77 (100%)
 - **Failed**: 0
-- **Execution Time**: ~2.99 seconds
+- **Execution Time**: ~3.34 seconds
 - **Platform**: Windows (win32), Python 3.12.10
 
 #### Breakdown by Test Module:
 
 | Test File | Tests | Status | Scope |
 |---|:---:|:---:|---|
-| `tests/test_config.py` | 3 | PASSED | Settings validation, default values, env overrides |
+| `tests/test_config.py` | 11 | PASSED | Settings validation, cloud PostgreSQL URL normalization (`postgres://`, `postgresql://`, `+psycopg`), SQLite, invalid scheme rejection |
 | `tests/test_database.py` | 3 | PASSED | SQLite in-memory test DB session, transaction rollback, model binding |
-| `tests/test_health.py` | 5 | PASSED | `/health`, `/health/db`, `/api/v1/health`, database error masking |
+| `tests/test_health.py` | 8 | PASSED | `/health`, `/health/db`, `/api/v1/health`, database error masking, multi-origin CORS parsing, wildcard rejection, dev vs prod isolation |
 | `tests/test_auth.py` | 5 | PASSED | User registration, duplicate checks, Argon2 password verification, JWT issuance, profile updates |
 | `tests/test_projects.py` | 3 | PASSED | Multi-user research workspace CRUD, cross-entity saving, user data isolation |
 | `tests/test_genes.py` | 7 | PASSED | MyGene.info mock client, gene search, details, cache retrieval, references |

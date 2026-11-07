@@ -127,3 +127,4 @@ def update_current_user_profile(
     db.commit()
     db.refresh(current_user)
     return UserResponse.model_validate(current_user)
+

@@ -43,10 +43,32 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS restricted to the configured frontend origin
+def resolve_cors_origins(frontend_url_config: str, app_env: str) -> list[str]:
+    """Parse configured CORS origins from FRONTEND_URL and development defaults.
+
+    - Splits comma-separated origin strings.
+    - Trims whitespace and ignores empty entries.
+    - Prohibits wildcard '*' origins (prohibited by CORS specification when credentials are enabled).
+    - Adds localhost development origins strictly when app_env == 'development'.
+    - In production, requires origins to be explicitly declared.
+    """
+    raw_entries = [entry.strip() for entry in frontend_url_config.split(",") if entry.strip()]
+
+    if app_env == "development":
+        dev_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+        for dev_url in dev_origins:
+            if dev_url not in raw_entries:
+                raw_entries.append(dev_url)
+
+    return [orig for orig in raw_entries if orig != "*"]
+
+
+# CORS configuration with multi-origin and environment-aware support
+allowed_origins = resolve_cors_origins(settings.FRONTEND_URL, settings.APP_ENV)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept"],

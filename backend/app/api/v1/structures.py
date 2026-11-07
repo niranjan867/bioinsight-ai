@@ -97,3 +97,4 @@ async def get_alphafold_structure(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Failed to fetch AlphaFold structure: {exc}",
         ) from exc
+

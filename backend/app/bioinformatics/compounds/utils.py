@@ -44,3 +44,4 @@ def evaluate_lipinski_rule_of_five(
 def get_pubchem_image_url(cid: int) -> str:
     """Return canonical 2D structure image URL for a PubChem CID."""
     return f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/PNG"
+

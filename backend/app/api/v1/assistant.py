@@ -52,3 +52,4 @@ def get_query_suggestions() -> list[str]:
         "What are the top genetic targets associated with Asthma in Open Targets?",
         "Explain the function of TP53 and list its key biological roles",
     ]
+

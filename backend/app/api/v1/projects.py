@@ -331,3 +331,4 @@ def remove_project_item(
     db.add(activity)
     db.delete(item)
     db.commit()
+

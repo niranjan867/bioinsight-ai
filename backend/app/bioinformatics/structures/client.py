@@ -75,3 +75,4 @@ class StructureClient:
             except httpx.HTTPError as exc:
                 logger.warning("AlphaFold PDB file download failed: %s", exc)
                 return None
+

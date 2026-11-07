@@ -64,3 +64,4 @@ async def get_pdb_ligands(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Failed to extract ligands from PDB: {exc}",
         ) from exc
+

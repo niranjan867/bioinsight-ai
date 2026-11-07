@@ -119,3 +119,4 @@ class DiseaseClient:
             except httpx.HTTPError as exc:
                 logger.warning("Europe PMC search failed for '%s': %s", query, exc)
                 return 0, []
+

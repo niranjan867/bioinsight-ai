@@ -42,3 +42,4 @@ class CompoundCache(Base):
     __table_args__ = (
         Index("ix_compound_cache_name_source", "name", "source"),
     )
+

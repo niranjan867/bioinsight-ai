@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
 
 from app.database.session import get_db
-from app.main import app
+from app.main import app, resolve_cors_origins
 
 
 def test_root_health_endpoint(client: TestClient):
@@ -83,3 +83,34 @@ def test_cors_preflight(client: TestClient):
     )
     assert response.status_code == status.HTTP_200_OK
     assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+
+
+def test_resolve_cors_origins_multiple_and_whitespace():
+    """Verify comma-separated origins are trimmed and empty entries ignored."""
+    raw = " https://bioinsight.vercel.app , , https://bioinsight-git-master.vercel.app , "
+    origins = resolve_cors_origins(raw, app_env="production")
+    assert origins == [
+        "https://bioinsight.vercel.app",
+        "https://bioinsight-git-master.vercel.app",
+    ]
+
+
+def test_resolve_cors_origins_wildcard_rejection():
+    """Verify wildcard '*' origins are stripped to prevent insecure credentialed CORS."""
+    raw = "*, https://bioinsight.vercel.app"
+    origins = resolve_cors_origins(raw, app_env="production")
+    assert "*" not in origins
+    assert origins == ["https://bioinsight.vercel.app"]
+
+
+def test_resolve_cors_origins_development_vs_production():
+    """Verify development mode appends local origins while production remains strictly isolated."""
+    dev_origins = resolve_cors_origins("https://preview.vercel.app", app_env="development")
+    assert "http://localhost:3000" in dev_origins
+    assert "http://127.0.0.1:3000" in dev_origins
+    assert "https://preview.vercel.app" in dev_origins
+
+    prod_origins = resolve_cors_origins("https://preview.vercel.app", app_env="production")
+    assert "http://localhost:3000" not in prod_origins
+    assert "http://127.0.0.1:3000" not in prod_origins
+    assert prod_origins == ["https://preview.vercel.app"]

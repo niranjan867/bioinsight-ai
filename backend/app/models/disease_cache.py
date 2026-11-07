@@ -41,3 +41,4 @@ class DiseaseCache(Base):
     __table_args__ = (
         Index("ix_disease_cache_name_source", "name", "source"),
     )
+

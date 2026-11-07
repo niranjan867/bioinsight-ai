@@ -34,10 +34,31 @@ export class NetworkError extends Error {
 }
 
 /**
- * Resolves the configured API base URL, defaulting to local FastAPI host.
+ * Resolves the configured API base URL with priority:
+ * 1. NEXT_PUBLIC_API_URL
+ * 2. NEXT_PUBLIC_API_BASE_URL
+ * 3. Local development fallback (http://127.0.0.1:8000)
+ *
+ * In production browser runtime, prevents silent fallback to localhost
+ * if environment configuration is missing.
  */
 export function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+  const primaryUrl = process.env.NEXT_PUBLIC_API_URL;
+  const secondaryUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const configured = primaryUrl?.trim() || secondaryUrl?.trim();
+
+  if (configured) {
+    return configured.replace(/\/+$/, "");
+  }
+
+  // Prevent silent fallback to localhost in production browser runtime
+  if (process.env.NODE_ENV === "production" && typeof window !== "undefined") {
+    throw new NetworkError(
+      "BioInsight AI production configuration error: neither NEXT_PUBLIC_API_URL nor NEXT_PUBLIC_API_BASE_URL is set. API requests cannot fall back to localhost in production."
+    );
+  }
+
+  return "http://127.0.0.1:8000";
 }
 
 /**

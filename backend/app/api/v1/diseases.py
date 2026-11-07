@@ -95,3 +95,4 @@ async def get_disease_publications(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Europe PMC search failed: {exc}",
         ) from exc
+

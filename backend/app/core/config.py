@@ -50,11 +50,18 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_database_url(cls, v: str) -> str:
-        if not v.startswith(("postgresql+psycopg://", "sqlite://")):
+        url = v.strip()
+        # Normalize standard cloud PostgreSQL prefixes to psycopg3 driver dialect
+        if url.startswith("postgres://"):
+            url = "postgresql+psycopg://" + url[len("postgres://"):]
+        elif url.startswith("postgresql://") and not url.startswith("postgresql+psycopg://"):
+            url = "postgresql+psycopg://" + url[len("postgresql://"):]
+
+        if not url.startswith(("postgresql+psycopg://", "sqlite://")):
             raise ValueError(
-                "DATABASE_URL must start with 'postgresql+psycopg://' (or 'sqlite://' for testing)"
+                "DATABASE_URL must be a PostgreSQL URL (normalized to 'postgresql+psycopg://') or SQLite URL ('sqlite://')"
             )
-        return v
+        return url
 
     @property
     def resolved_storage_path(self) -> Path:
