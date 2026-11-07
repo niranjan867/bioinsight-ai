@@ -15,6 +15,8 @@ import {
   Server,
   Bot,
   Crosshair,
+  Database,
+  Cpu,
 } from "lucide-react";
 import { cn } from "cn";
 
@@ -31,11 +33,13 @@ const mainNavItems: NavItem[] = [
 ];
 
 const intelligenceNavItems: NavItem[] = [
+  { name: "Scientific Database Hub", href: "/databases", icon: Database, badge: "11 DBs" },
+  { name: "Molecular Docking (Vina)", href: "/docking", icon: Cpu, badge: "Vina" },
   { name: "Gene Intelligence", href: "/genes", icon: Dna },
   { name: "Protein Intelligence", href: "/proteins", icon: Activity },
   { name: "Sequence Laboratory", href: "/sequences", icon: FlaskConical },
   { name: "Structure Explorer", href: "/structures", icon: Layers },
-  { name: "Protein-Ligand Docking", href: "/interactions", icon: Crosshair },
+  { name: "Interaction Profiler", href: "/interactions", icon: Crosshair },
   { name: "Disease Intelligence", href: "/diseases", icon: HeartPulse },
   { name: "Compound Intelligence", href: "/compounds", icon: Atom },
 ];

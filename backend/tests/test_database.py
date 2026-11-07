@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock, patch
 
+from app.database.session import Base, get_db
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-
-from app.database.session import Base, get_db
 
 
 def test_base_declarative_metadata():

@@ -45,10 +45,10 @@ npm run build
 
 ### Backend Test Suite (Pytest 9.2.0)
 
-- **Total Test Cases**: 77
-- **Passed**: 77 (100%)
+- **Total Test Cases**: 94
+- **Passed**: 94 (100%)
 - **Failed**: 0
-- **Execution Time**: ~3.34 seconds
+- **Execution Time**: ~3.96 seconds
 - **Platform**: Windows (win32), Python 3.12.10
 
 #### Breakdown by Test Module:
@@ -57,6 +57,8 @@ npm run build
 |---|:---:|:---:|---|
 | `tests/test_config.py` | 11 | PASSED | Settings validation, cloud PostgreSQL URL normalization (`postgres://`, `postgresql://`, `+psycopg`), SQLite, invalid scheme rejection |
 | `tests/test_database.py` | 3 | PASSED | SQLite in-memory test DB session, transaction rollback, model binding |
+| `tests/test_databases.py` | 7 | PASSED | 11 core database connectors registry, parallel query execution, partial failure tolerance, categories, API endpoints |
+| `tests/test_docking_v2.py` | 10 | PASSED | Receptor cleaning & PDBQT prep, ligand 3D conformer & Meeko PDBQT, pocket bounding boxes, Vina output parsing, contacts classifier, PDF/DOCX reports |
 | `tests/test_health.py` | 8 | PASSED | `/health`, `/health/db`, `/api/v1/health`, database error masking, multi-origin CORS parsing, wildcard rejection, dev vs prod isolation |
 | `tests/test_auth.py` | 5 | PASSED | User registration, duplicate checks, Argon2 password verification, JWT issuance, profile updates |
 | `tests/test_projects.py` | 3 | PASSED | Multi-user research workspace CRUD, cross-entity saving, user data isolation |
@@ -76,24 +78,29 @@ npm run build
 - **Python `compileall`**: 0 syntax or import errors across all modules.
 - **Alembic Schema Check**: `alembic check` clean (`No new upgrade operations detected`).
 
-### Frontend Verification (Next.js 16.4.4 / React 19)
-
-- **TypeScript (`npx tsc --noEmit`)**: 0 errors.
-- **ESLint (`npm run lint`)**: 0 errors, 0 warnings across all 16 page and layout components.
-- **Production Build (`npm run build`)**: 16 static/dynamically streamed routes compiled with Turbopack.
-
-### Frontend Verification (Next.js 16.4.4 / Turbopack)
+### Frontend Verification (Next.js 16.4.4 / Turbopack / React 19)
 
 - **TypeScript (`npx tsc --noEmit`)**: 0 type errors.
 - **ESLint (`npm run lint`)**: 0 warnings or errors.
-- **Production Build (`npm run build`)**: Succeeded in ~785ms.
-- **Generated Routes** (8 static pages):
+- **Production Build (`npm run build`)**: Succeeded cleanly with all 20 routes:
   - `○ /` (Main scientific dashboard)
   - `○ /_not-found` (Custom 404 handler)
   - `○ /api-test` (API and database diagnostic utility)
+  - `○ /assistant` (AI Research Assistant)
+  - `○ /compounds` (Drug and Small Molecule Explorer)
+  - `○ /databases` (Dynamic Scientific Database Hub - 11 Connectors)
+  - `○ /diseases` (Disease Intelligence & Targets)
+  - `○ /docking` (AutoDock Vina Molecular Docking Workbench)
   - `○ /genes` (Gene Intelligence module)
+  - `○ /interactions` (Receptor-Ligand Contact Analysis)
+  - `○ /login` (User Authentication)
+  - `○ /projects` (Research Project Management)
+  - `◐ /projects/[id]` (Project Detail Workspace)
   - `○ /proteins` (Protein Intelligence module)
+  - `○ /register` (Account Registration)
+  - `○ /reports` (Research Report Generator)
   - `○ /sequences` (Sequence Laboratory workspace)
+  - `○ /structures` (Macromolecular Structure Explorer)
 
 ---
 

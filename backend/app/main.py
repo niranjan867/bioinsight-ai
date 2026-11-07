@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.api.v1.assistant import router as assistant_v1_router
 from app.api.v1.auth import router as auth_v1_router
 from app.api.v1.compounds import router as compounds_v1_router
+from app.api.v1.databases import router as databases_v1_router
 from app.api.v1.diseases import router as diseases_v1_router
 from app.api.v1.docking import router as docking_v1_router
 from app.api.v1.genes import router as genes_v1_router
@@ -112,6 +113,7 @@ def root_database_health(db: Annotated[Session, Depends(get_db)]) -> dict[str, s
 
 # Mount API v1 routers
 app.include_router(health_v1_router, prefix="/api/v1")
+app.include_router(databases_v1_router, prefix="/api/v1")
 app.include_router(auth_v1_router, prefix="/api/v1")
 app.include_router(projects_v1_router, prefix="/api/v1")
 app.include_router(genes_v1_router, prefix="/api/v1")

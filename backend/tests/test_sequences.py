@@ -1,8 +1,6 @@
 from unittest.mock import AsyncMock
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.bioinformatics.sequences import blast as blast_service
 from app.bioinformatics.sequences.schemas import (
     AlignmentRequest,
@@ -14,6 +12,7 @@ from app.bioinformatics.sequences.service import (
     analyze,
     translate,
 )
+from fastapi.testclient import TestClient
 
 
 def test_dna_analysis_preserves_input_and_computes_metrics() -> None:

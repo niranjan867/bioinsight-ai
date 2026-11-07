@@ -1,10 +1,5 @@
 from unittest.mock import AsyncMock, patch
 
-from fastapi import status
-from fastapi.testclient import TestClient
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
 from app.bioinformatics.genes.client import GeneClientError, GeneNotFoundError
 from app.bioinformatics.genes.utils import (
     build_external_references,
@@ -12,6 +7,10 @@ from app.bioinformatics.genes.utils import (
     normalize_species,
 )
 from app.models.gene_cache import GeneCache
+from fastapi import status
+from fastapi.testclient import TestClient
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 MOCK_MYGENE_SEARCH = {
     "total": 1,

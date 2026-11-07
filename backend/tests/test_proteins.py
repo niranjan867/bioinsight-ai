@@ -1,10 +1,5 @@
 from unittest.mock import AsyncMock, patch
 
-from fastapi import status
-from fastapi.testclient import TestClient
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
 from app.bioinformatics.proteins.client import ProteinClientError, ProteinNotFoundError
 from app.bioinformatics.proteins.utils import (
     analyze_protein_sequence,
@@ -15,6 +10,10 @@ from app.bioinformatics.proteins.utils import (
     validate_uniprot_accession,
 )
 from app.models.protein_cache import ProteinCache
+from fastapi import status
+from fastapi.testclient import TestClient
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 MOCK_UNIPROT_SEARCH = {
     "total": 1,

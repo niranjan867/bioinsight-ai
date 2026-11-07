@@ -10,6 +10,7 @@ import {
   Check,
   AlertCircle,
   RotateCw,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -320,6 +321,26 @@ export default function InteractionsPage() {
           <p className="text-xs text-muted-foreground">
             Analyze atomic contact matrices, detect binding pockets, calculate hydrogen bonds, and compute empirical docking binding affinities
           </p>
+        </div>
+
+        {/* BioInsight 2.0 Banner */}
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="space-y-0.5">
+            <div className="text-xs font-semibold text-primary flex items-center gap-1.5">
+              <Crosshair className="h-4 w-4" />
+              BioInsight AI 2.0: Genuine AutoDock Vina Molecular Docking Available
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Prepare custom ligands with RDKit conformer generation, configure 3D binding boxes, and execute native AutoDock Vina.
+            </p>
+          </div>
+          <Link
+            href="/docking"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 h-8 shrink-0"
+          >
+            Launch Docking Workbench
+            <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
 
         {/* Input Form & Parameters */}
