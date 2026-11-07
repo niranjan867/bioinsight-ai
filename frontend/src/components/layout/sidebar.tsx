@@ -12,8 +12,9 @@ import {
   Atom,
   FolderKanban,
   FileText,
-  Settings,
   Server,
+  Bot,
+  Crosshair,
 } from "lucide-react";
 import { cn } from "cn";
 
@@ -34,14 +35,15 @@ const intelligenceNavItems: NavItem[] = [
   { name: "Protein Intelligence", href: "/proteins", icon: Activity },
   { name: "Sequence Laboratory", href: "/sequences", icon: FlaskConical },
   { name: "Structure Explorer", href: "/structures", icon: Layers },
+  { name: "Protein-Ligand Docking", href: "/interactions", icon: Crosshair },
   { name: "Disease Intelligence", href: "/diseases", icon: HeartPulse },
   { name: "Compound Intelligence", href: "/compounds", icon: Atom },
 ];
 
 const workspaceNavItems: NavItem[] = [
-  { name: "Reports", href: "/reports", icon: FileText },
+  { name: "AI Research Assistant", href: "/assistant", icon: Bot, badge: "AI" },
+  { name: "Research Reports", href: "/reports", icon: FileText },
   { name: "System Diagnostics", href: "/api-test", icon: Server, badge: "Live" },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 interface SidebarProps {

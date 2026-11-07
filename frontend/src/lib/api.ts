@@ -86,6 +86,14 @@ export async function apiRequest<T = unknown>(
     headers.set("Accept", "application/json");
   }
 
+  // Attach auth token if available in browser localStorage
+  if (typeof window !== "undefined" && !headers.has("Authorization")) {
+    const token = localStorage.getItem("bioinsight_token");
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
   let requestBody: BodyInit | undefined;
   if (body !== undefined && body !== null) {
     if (body instanceof FormData || body instanceof URLSearchParams || body instanceof Blob) {

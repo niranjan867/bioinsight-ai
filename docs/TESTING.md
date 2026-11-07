@@ -41,14 +41,14 @@ npm run build
 
 ---
 
-## 2. Latest Verified Results (2026-11-05)
+## 2. Latest Verified Results (2026-11-07)
 
 ### Backend Test Suite (Pytest 9.2.0)
 
-- **Total Test Cases**: 40
-- **Passed**: 40 (100%)
+- **Total Test Cases**: 65
+- **Passed**: 65 (100%)
 - **Failed**: 0
-- **Execution Time**: ~0.78 seconds
+- **Execution Time**: ~2.99 seconds
 - **Platform**: Windows (win32), Python 3.12.10
 
 #### Breakdown by Test Module:
@@ -58,8 +58,16 @@ npm run build
 | `tests/test_config.py` | 3 | PASSED | Settings validation, default values, env overrides |
 | `tests/test_database.py` | 3 | PASSED | SQLite in-memory test DB session, transaction rollback, model binding |
 | `tests/test_health.py` | 5 | PASSED | `/health`, `/health/db`, `/api/v1/health`, database error masking |
+| `tests/test_auth.py` | 5 | PASSED | User registration, duplicate checks, Argon2 password verification, JWT issuance, profile updates |
+| `tests/test_projects.py` | 3 | PASSED | Multi-user research workspace CRUD, cross-entity saving, user data isolation |
 | `tests/test_genes.py` | 7 | PASSED | MyGene.info mock client, gene search, details, cache retrieval, references |
 | `tests/test_proteins.py` | 10 | PASSED | UniProt search, protein details, sequence analysis, structures, PDB/AlphaFold, cache |
+| `tests/test_diseases.py` | 3 | PASSED | Open Targets Platform GraphQL client, disease search, targets, Europe PMC literature |
+| `tests/test_compounds.py` | 3 | PASSED | PubChem PUG REST, ChEMBL mechanisms, Lipinski Rule of 5 evaluation, 3D SDF conformer |
+| `tests/test_structures.py` | 3 | PASSED | RCSB PDB metadata, atomic PDB coordinate download, AlphaFold DB prediction metadata |
+| `tests/test_docking.py` | 2 | PASSED | Biopython 3D PDB parser, ligand extraction, atomic distance contact matrix, pocket geometry, affinity scoring |
+| `tests/test_assistant.py` | 3 | PASSED | Evidence-grounded scientific research assistant, MyGene/PubChem grounding, zero hallucination |
+| `tests/test_reports.py` | 3 | PASSED | Publication-grade PDF generation via ReportLab, Microsoft Word DOCX via python-docx, project export |
 | `tests/test_sequences.py` | 12 | PASSED | DNA/RNA/Protein validation, GC/AT content, FASTA parsing, multi-frame translation, pairwise alignment, mock BLAST submit/poll |
 
 ### Backend Static Analysis & Bytecode Compilation
@@ -67,6 +75,12 @@ npm run build
 - **Ruff Linter**: 0 errors across `app`, `tests`, and `migrations`.
 - **Python `compileall`**: 0 syntax or import errors across all modules.
 - **Alembic Schema Check**: `alembic check` clean (`No new upgrade operations detected`).
+
+### Frontend Verification (Next.js 16.4.4 / React 19)
+
+- **TypeScript (`npx tsc --noEmit`)**: 0 errors.
+- **ESLint (`npm run lint`)**: 0 errors, 0 warnings across all 16 page and layout components.
+- **Production Build (`npm run build`)**: 16 static/dynamically streamed routes compiled with Turbopack.
 
 ### Frontend Verification (Next.js 16.4.4 / Turbopack)
 

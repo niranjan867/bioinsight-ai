@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -16,13 +16,17 @@ export function AppShell({ children }: AppShellProps) {
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop Persistent Sidebar */}
       <div className="hidden md:flex md:shrink-0">
-        <Sidebar />
+        <Suspense fallback={<div className="w-64 bg-card border-r border-border" />}>
+          <Sidebar />
+        </Suspense>
       </div>
 
       {/* Mobile Drawer Sheet */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="left" className="p-0 w-64 max-w-xs border-r border-border bg-card">
-          <Sidebar onNavigate={() => setMobileMenuOpen(false)} />
+          <Suspense fallback={<div className="w-64 bg-card border-r border-border" />}>
+            <Sidebar onNavigate={() => setMobileMenuOpen(false)} />
+          </Suspense>
         </SheetContent>
       </Sheet>
 

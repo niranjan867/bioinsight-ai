@@ -7,6 +7,8 @@ import {
   FlaskConical,
   HeartPulse,
   Atom,
+  Layers,
+  Crosshair,
   ArrowRight,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -72,6 +74,26 @@ const modules: ModuleCard[] = [
     icon: Atom,
     tags: ["PubChem", "ChEMBL", "SMILES"],
     colorClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  },
+  {
+    title: "Structure Explorer",
+    category: "Structural Biology",
+    description:
+      "Explore 3D macromolecular structures from RCSB PDB and predicted models from AlphaFold DB with WebGL.",
+    href: "/structures",
+    icon: Layers,
+    tags: ["RCSB PDB", "AlphaFold", "WebGL 3D"],
+    colorClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  },
+  {
+    title: "Protein-Ligand Docking",
+    category: "Biomolecular Interactions",
+    description:
+      "Detect binding pockets, calculate intermolecular contact matrices, and compute empirical docking affinities.",
+    href: "/interactions",
+    icon: Crosshair,
+    tags: ["Binding Pocket", "H-Bonds", "Affinity"],
+    colorClass: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20",
   },
 ];
 

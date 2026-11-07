@@ -3,19 +3,33 @@
 import Link from "next/link";
 import {
   Search,
-  Bell,
   FlaskConical,
   Menu,
+  Bot,
+  LogIn,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/auth-context";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
 }
 
 export function Header({ onMenuToggle }: HeaderProps) {
+  const { user, logout } = useAuth();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 px-4 md:px-6 backdrop-blur-sm">
       {/* Left: Mobile Toggle & Workspace Indicator */}
@@ -35,7 +49,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         <div className="hidden items-center gap-2 rounded-lg border border-border/80 bg-muted/30 px-3 py-1.5 text-xs sm:flex">
           <FlaskConical className="h-3.5 w-3.5 text-primary" />
           <span className="font-medium text-foreground">Workspace:</span>
-          <span className="text-muted-foreground">Human Genetics & Multi-Omics</span>
+          <span className="text-muted-foreground">Multi-Omics & Systems Biology</span>
         </div>
       </div>
 
@@ -54,8 +68,20 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </div>
       </div>
 
-      {/* Right: Diagnostics Pill, Notifications, Profile */}
+      {/* Right: AI Assistant, Diagnostics Pill, Profile */}
       <div className="flex items-center gap-2 md:gap-3">
+        {/* AI Research Assistant Pill */}
+        <Link href="/assistant">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1.5 border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 text-xs font-semibold"
+          >
+            <Bot className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">AI Assistant</span>
+          </Button>
+        </Link>
+
         {/* System Health Quick Pill */}
         <Link href="/api-test" className="hidden sm:inline-block">
           <Badge
@@ -70,33 +96,48 @@ export function Header({ onMenuToggle }: HeaderProps) {
           </Badge>
         </Link>
 
-        {/* Notifications */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative h-9 w-9 text-muted-foreground hover:text-foreground"
-          aria-label="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-primary" />
-        </Button>
-
-        {/* User Profile Avatar */}
-        <div className="flex items-center gap-2.5 pl-1 border-l border-border/60">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20">
-            DR
-          </div>
-          <div className="hidden lg:block text-left">
-            <div className="text-xs font-semibold leading-tight text-foreground">
-              Dr. Researcher
+        {/* User Profile or Login Action */}
+        <div className="flex items-center gap-2 pl-2 border-l border-border/60">
+          {user ? (
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20">
+                {getInitials(user.full_name)}
+              </div>
+              <div className="hidden lg:block text-left">
+                <div className="text-xs font-semibold leading-tight text-foreground">
+                  {user.full_name}
+                </div>
+                <div className="text-[10px] text-muted-foreground truncate max-w-[140px]">
+                  {user.institution || user.email}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={logout}
+                title="Sign Out"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </Button>
             </div>
-            <div className="text-[10px] text-muted-foreground">
-              Computational Biology Lab
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <Link href="/login">
+                <Button size="sm" variant="ghost" className="h-8 text-xs gap-1.5">
+                  <LogIn className="h-3.5 w-3.5" />
+                  <span>Sign In</span>
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button size="sm" className="h-8 text-xs font-medium">
+                  Register
+                </Button>
+              </Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </header>
   );
 }
-

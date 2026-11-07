@@ -1,12 +1,18 @@
 # Direct runtime dependencies
 alembic==1.20.1
+argon2-cffi==25.1.0
 biopython==1.88
 fastapi==0.162.0
 httpx==0.28.1
+numpy==2.5.4
 psycopg[binary]==3.3.7
 pydantic-settings==2.16.2
+PyJWT==2.15.1
+python-docx==1.2.0
 python-dotenv==1.2.4
 python-multipart==0.0.33
+pwdlib==0.3.1
+reportlab==5.1.0
 sqlalchemy==2.1.6
 uvicorn[standard]==0.54.0
 

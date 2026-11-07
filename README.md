@@ -6,7 +6,7 @@
 [![React 19](https://img.shields.io/badge/React-19.3-blue.svg)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.6-blue.svg)](https://www.postgresql.org/)
 [![Biopython](https://img.shields.io/badge/Biopython-1.88-green.svg)](https://biopython.org/)
-[![Tests](https://img.shields.io/badge/tests-40%20passed-brightgreen.svg)](docs/TESTING.md)
+[![Tests](https://img.shields.io/badge/tests-65%20passed-brightgreen.svg)](docs/TESTING.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 BioInsight AI is a modern, local-first bioinformatics research platform built for life scientists, computational biologists, and researchers. It integrates gene exploration, protein characterization, and sequence analysis into a unified, high-performance workspace with explicit scientific provenance.
@@ -103,7 +103,52 @@ BioInsight AI solves these issues through a clean, unified architecture:
   - Structured extraction of top hits: accession, title, E-value, bit score, and query coverage.
 - **FASTA File Ingestion**: Upload multi-record FASTA files (up to 2 MiB) with automatic header and sequence parsing.
 
-### D. System Diagnostics & Dashboard (`/`, `/api-test`)
+### D. Disease Intelligence (`/diseases`)
+- **Open Targets Platform**: Query disease targets, therapeutic areas, and clinical phenotype associations.
+- **Europe PMC Literature**: Search peer-reviewed biomedical literature and PubMed identifiers directly associated with the disease.
+- **PostgreSQL Caching**: Search results and entity details cached in `disease_cache` table.
+
+### E. Drug & Compound Intelligence (`/compounds`)
+- **PubChem PUG REST API**: Query chemical compounds by name, CID, or SMILES.
+- **Physicochemical Properties**: Molecular weight, canonical SMILES, InChIKey, XLogP, TPSA, H-bond donors/acceptors, rotatable bonds.
+- **Lipinski's Rule of 5**: Evaluates small-molecule oral druglikeness (MW $\le 500$, LogP $\le 5.0$, H-donors $\le 5$, H-acceptors $\le 10$).
+- **ChEMBL Cross-References**: Pharmacological mechanisms of action, clinical indications, and biological targets.
+- **3D Conformer Download**: Export standard 3D SDF coordinate files and 2D chemical structure diagrams.
+
+### F. Macromolecular Structure Explorer (`/structures`)
+- **Experimental Structures (RCSB PDB)**: Resolution, experimental determination method (X-ray, cryo-EM, NMR), polymer chains, and bound ligands.
+- **Computational Predictions (AlphaFold DB)**: Whole-organism deep-learning structure predictions with per-residue pLDDT confidence categories.
+- **3D WebGL Visualization**: Embedded 3Dmol.js viewer supporting cartoon, stick, sphere, and solvent-accessible surface representations with spectrum and chain coloring.
+- **Atomic Coordinate Export**: Download raw `.pdb` files for molecular modeling.
+
+### G. Protein-Ligand Interaction & Docking Laboratory (`/interactions`)
+- **Hetero-Residue Ligand Extraction**: Automatically isolates non-water bound co-factors, drugs, and prosthetic groups (e.g. HEM, STI, ATP).
+- **3D Atomic Distance Matrix**: Biopython Euclidean distance calculations between ligand and macromolecular binding residues within a configurable radius ($2.5 - 7.0\,\text{Å}$).
+- **Contact Classification**: Identifies hydrogen bonds, hydrophobic interactions, salt bridges, and van der Waals contacts.
+- **Binding Pocket Geometry**: Pocket centroid coordinates ($X, Y, Z$), radius, and estimated cavity volume ($\text{Å}^3$).
+- **Empirical Affinity Scoring**: Estimated binding free energy ($\Delta G$ in $\text{kcal/mol}$) and interaction quality index.
+
+### H. Research Project Management (`/projects`)
+- **Multi-Project Workspace**: Create and organize multi-omics research projects.
+- **Cross-Entity Bookmarking**: Save genes, proteins, compounds, diseases, 3D structures, and custom notes directly into projects.
+- **Audit Logging**: Comprehensive activity stream recording every bookmark, note, and update.
+
+### I. Multi-User Authentication & Security (`/login`, `/register`)
+- **Secure Registration & Login**: User identity management with Argon2 password hashing (`argon2-cffi` + `pwdlib`).
+- **Stateless JWT Authorization**: Signed tokens (HS256) propagated via `Authorization: Bearer` headers.
+- **Tenant Data Isolation**: Research projects and saved datasets are strictly isolated per authenticated user.
+
+### J. Grounded AI Research Assistant (`/assistant`)
+- **Evidence-Grounded Intelligence**: Synthesizes real biological facts from local PostgreSQL caches and authoritative APIs (MyGene, UniProt, PubChem, Open Targets).
+- **Verifiable Citations**: Every generated finding includes database sources, accession identifiers, and outbound links.
+- **Zero Hallucination Policy**: Refuses to speculate or invent biological targets or sequences.
+
+### K. Publication-Grade Research Report Generator (`/reports`)
+- **PDF Generation via ReportLab**: Generates clean, publication-grade research reports with executive summaries, structured tables, and references.
+- **Microsoft Word DOCX via python-docx**: Generates editable Word documents for collaboration and grant applications.
+- **Project Dataset Export**: One-click complete project dossier exports.
+
+### L. System Diagnostics & Dashboard (`/`, `/api-test`)
 - **Operational Monitoring**: Real-time round-trip latency checks for both FastAPI backend and PostgreSQL database.
 - **Diagnostic Inspector**: Direct JSON inspection of API health endpoints.
 
@@ -118,7 +163,9 @@ BioInsight AI solves these issues through a clean, unified architecture:
 - **Database ORM**: SQLAlchemy 2.x
 - **Database Driver**: `psycopg` (Version 3)
 - **Database Migrations**: Alembic 1.20
-- **Scientific Computing**: Biopython 1.88, NumPy
+- **Scientific Computing**: Biopython 1.88, NumPy 2.x
+- **Authentication**: Argon2 (`pwdlib`, `argon2-cffi`), PyJWT
+- **Report Generation**: ReportLab 5.1 (PDF), python-docx 1.2 (DOCX)
 - **HTTP Client**: HTTPX 0.28 (Async connection pooling)
 - **ASGI Server**: Uvicorn 0.54
 
@@ -127,6 +174,7 @@ BioInsight AI solves these issues through a clean, unified architecture:
 - **Library**: React 19.3.0
 - **Language**: TypeScript 5.x (Strict mode)
 - **Styling**: Tailwind CSS 4, Lucide React icons
+- **3D Molecular Viewing**: 3Dmol.js (WebGL)
 - **Components**: Radix UI / shadcn design system patterns
 
 ### Database & Storage
