@@ -21,8 +21,9 @@ from app.api.v1.proteins import router as proteins_v1_router
 from app.api.v1.reports import router as reports_v1_router
 from app.api.v1.sequences import router as sequences_v1_router
 from app.api.v1.structures import router as structures_v1_router
+from app.bioinformatics.docking.service import DockingService
 from app.core.config import settings
-from app.database.session import get_db
+from app.database.session import SessionLocal, get_db
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan context for startup and shutdown procedures."""
     logger.info("Starting %s in %s mode", settings.APP_NAME, settings.APP_ENV)
+    try:
+        with SessionLocal() as db:
+            DockingService.reconcile_interrupted_jobs(db)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Startup job reconciliation warning: %s", exc)
     yield
     logger.info("Shutting down %s", settings.APP_NAME)
 

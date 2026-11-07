@@ -29,6 +29,18 @@ class PdbeConnector(BaseDatabaseConnector):
     async def search(self, query: str, page: int = 1, limit: int = 10) -> ConnectorSearchResult:
         start_time = time.perf_counter()
         clean_q = query.strip()
+        if not clean_q:
+            return ConnectorSearchResult(
+                database_id=self.db_id,
+                database_name=self.name,
+                category=self.category,
+                total_hits=0,
+                page=page,
+                page_size=limit,
+                execution_time_ms=0.0,
+                records=[],
+            )
+
         url = "https://www.ebi.ac.uk/pdbe/search/pdb/select"
         start_row = (page - 1) * limit
         params = {

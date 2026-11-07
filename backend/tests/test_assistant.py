@@ -1,12 +1,13 @@
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, patch
 
+from fastapi.testclient import TestClient
+
 from app.bioinformatics.compounds.schemas import (
     CompoundDetailResponse,
     LipinskiRuleOfFive,
 )
 from app.bioinformatics.genes.schemas import GeneDetailResponse, GenomicLocation
-from fastapi.testclient import TestClient
 
 
 def test_get_assistant_suggestions(client: TestClient) -> None:

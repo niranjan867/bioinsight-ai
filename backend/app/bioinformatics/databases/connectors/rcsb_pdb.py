@@ -26,9 +26,25 @@ class RcsbPdbConnector(BaseDatabaseConnector):
             rate_limit_per_minute=120,
         )
 
+    @property
+    def health_url(self) -> str:
+        return "https://data.rcsb.org/rest/v1/core/entry/4HHB"
+
     async def search(self, query: str, page: int = 1, limit: int = 10) -> ConnectorSearchResult:
         start_time = time.perf_counter()
         clean_q = query.strip()
+        if not clean_q:
+            return ConnectorSearchResult(
+                database_id=self.db_id,
+                database_name=self.name,
+                category=self.category,
+                total_hits=0,
+                page=page,
+                page_size=limit,
+                execution_time_ms=0.0,
+                records=[],
+            )
+
         start_row = (page - 1) * limit
 
         payload = {
@@ -60,7 +76,7 @@ class RcsbPdbConnector(BaseDatabaseConnector):
                 page_size=limit,
                 execution_time_ms=exec_ms,
                 records=[],
-                error=f"RCSB Search failed (HTTP {resp.status_code if resp else 'No response'})",
+                error=None if (resp and resp.status_code == 204) else f"RCSB Search failed (HTTP {resp.status_code if resp else 'No response'})",
             )
 
         data = resp.json()

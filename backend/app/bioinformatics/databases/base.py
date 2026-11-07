@@ -63,18 +63,22 @@ class BaseDatabaseConnector(abc.ABC):
         """Retrieve a specific record by its primary database identifier."""
         ...
 
+    @property
+    def health_url(self) -> str:
+        """Endpoint to check for service health. Defaults to home_url."""
+        return self.metadata.home_url
+
     async def check_health(self) -> ConnectorHealthStatus:
         """Verify endpoint connectivity and measure response latency."""
         start = time.perf_counter()
+        headers = {"User-Agent": "BioInsight-AI/2.0 (bioinformatics-platform)"}
         try:
             async with httpx.AsyncClient(
-                timeout=httpx.Timeout(6.0, connect=3.0),
+                timeout=httpx.Timeout(15.0, connect=8.0),
                 follow_redirects=True,
+                headers=headers,
             ) as client:
-                res = await client.head(self.metadata.home_url)
-                if res.status_code >= 400:
-                    # Fallback to GET if HEAD isn't permitted
-                    res = await client.get(self.metadata.home_url)
+                res = await client.get(self.health_url)
                 latency = round((time.perf_counter() - start) * 1000, 2)
                 is_healthy = res.status_code < 400
                 return ConnectorHealthStatus(

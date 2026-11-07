@@ -1,6 +1,8 @@
 from unittest.mock import patch
 
 import pytest
+from fastapi.testclient import TestClient
+
 from app.bioinformatics.docking.engine import parse_vina_output_pdbqt
 from app.bioinformatics.docking.interactions import analyze_pose_interactions
 from app.bioinformatics.docking.pocket import (
@@ -8,7 +10,6 @@ from app.bioinformatics.docking.pocket import (
     detect_pocket_from_residues,
 )
 from app.bioinformatics.docking.preparation import prepare_ligand, prepare_receptor
-from fastapi.testclient import TestClient
 
 SAMPLE_PDB = """ATOM      1  N   ASP A   1      27.251  24.414   2.114  1.00 11.29           N
 ATOM      2  CA  ASP A   1      25.885  24.754   2.565  1.00 12.68           C

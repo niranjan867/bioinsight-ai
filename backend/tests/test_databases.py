@@ -1,6 +1,8 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from fastapi.testclient import TestClient
+
 from app.bioinformatics.databases.base import BaseDatabaseConnector
 from app.bioinformatics.databases.registry import DatabaseRegistry
 from app.bioinformatics.databases.schemas import (
@@ -11,7 +13,6 @@ from app.bioinformatics.databases.schemas import (
     NormalizedRecord,
 )
 from app.main import app
-from fastapi.testclient import TestClient
 
 
 class DummyFailingConnector(BaseDatabaseConnector):

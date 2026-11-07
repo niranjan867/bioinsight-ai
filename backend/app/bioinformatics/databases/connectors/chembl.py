@@ -26,9 +26,25 @@ class ChemblConnector(BaseDatabaseConnector):
             rate_limit_per_minute=100,
         )
 
+    @property
+    def health_url(self) -> str:
+        return "https://www.ebi.ac.uk/chembl/api/data/status.json"
+
     async def search(self, query: str, page: int = 1, limit: int = 10) -> ConnectorSearchResult:
         start_time = time.perf_counter()
         clean_q = query.strip()
+        if not clean_q:
+            return ConnectorSearchResult(
+                database_id=self.db_id,
+                database_name=self.name,
+                category=self.category,
+                total_hits=0,
+                page=page,
+                page_size=limit,
+                execution_time_ms=0.0,
+                records=[],
+            )
+
         offset = (page - 1) * limit
         url = "https://www.ebi.ac.uk/chembl/api/data/molecule.json"
         params = {

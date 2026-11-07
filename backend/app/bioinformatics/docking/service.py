@@ -338,6 +338,8 @@ class DockingService:
         query = select(DockingJob).where(DockingJob.id == job_id)
         if user_id is not None:
             query = query.where((DockingJob.user_id == user_id) | (DockingJob.user_id.is_(None)))
+        else:
+            query = query.where(DockingJob.user_id.is_(None))
 
         job = db.scalar(query)
         if not job:
@@ -379,14 +381,31 @@ class DockingService:
         user_id: int | None = None,
         limit: int = 50,
     ) -> list[DockingJobResponse]:
-        """List past docking jobs with user isolation."""
+        """List past docking jobs with strict user data isolation."""
         query = select(DockingJob)
         if user_id is not None:
             query = query.where((DockingJob.user_id == user_id) | (DockingJob.user_id.is_(None)))
+        else:
+            query = query.where(DockingJob.user_id.is_(None))
         query = query.order_by(DockingJob.created_at.desc()).limit(limit)
 
         jobs = db.scalars(query).all()
         return [self._format_job_response(j) for j in jobs]
+
+    @staticmethod
+    def reconcile_interrupted_jobs(db: Session) -> int:
+        """Find any docking jobs left in QUEUED or RUNNING states upon server restart and mark them as failed."""
+        interrupted = db.scalars(
+            select(DockingJob).where(DockingJob.status.in_(["QUEUED", "RUNNING"]))
+        ).all()
+        for j in interrupted:
+            j.status = "FAILED"
+            j.error_message = "Docking computation was interrupted by a backend server restart. Please resubmit."
+            j.completed_at = datetime.now(UTC)
+        if interrupted:
+            db.commit()
+            logger.info("Reconciled %d interrupted docking jobs on startup", len(interrupted))
+        return len(interrupted)
 
     def _format_job_response(self, job: DockingJob) -> DockingJobResponse:
         return DockingJobResponse(

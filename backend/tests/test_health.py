@@ -1,8 +1,9 @@
-from app.database.session import get_db
-from app.main import app, resolve_cors_origins
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
+
+from app.database.session import get_db
+from app.main import app, resolve_cors_origins
 
 
 def test_root_health_endpoint(client: TestClient):

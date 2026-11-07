@@ -29,6 +29,18 @@ class ReactomeConnector(BaseDatabaseConnector):
     async def search(self, query: str, page: int = 1, limit: int = 10) -> ConnectorSearchResult:
         start_time = time.perf_counter()
         clean_q = query.strip()
+        if not clean_q:
+            return ConnectorSearchResult(
+                database_id=self.db_id,
+                database_name=self.name,
+                category=self.category,
+                total_hits=0,
+                page=page,
+                page_size=limit,
+                execution_time_ms=0.0,
+                records=[],
+            )
+
         url = "https://reactome.org/ContentService/search/query"
         params = {
             "query": clean_q,
@@ -48,7 +60,7 @@ class ReactomeConnector(BaseDatabaseConnector):
                 page_size=limit,
                 execution_time_ms=exec_ms,
                 records=[],
-                error=f"Reactome search failed (HTTP {resp.status_code if resp else 'No response'})",
+                error=None if (resp and resp.status_code == 404) else f"Reactome search failed (HTTP {resp.status_code if resp else 'No response'})",
             )
 
         data = resp.json()

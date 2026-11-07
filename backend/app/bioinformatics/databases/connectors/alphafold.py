@@ -26,12 +26,43 @@ class AlphaFoldConnector(BaseDatabaseConnector):
             rate_limit_per_minute=120,
         )
 
+    @property
+    def health_url(self) -> str:
+        return "https://alphafold.ebi.ac.uk/api/prediction/P04637"
+
     async def search(self, query: str, page: int = 1, limit: int = 10) -> ConnectorSearchResult:
         start_time = time.perf_counter()
         clean_q = query.strip().upper()
-        url = f"https://alphafold.ebi.ac.uk/api/prediction/{clean_q}"
+        if not clean_q:
+            return ConnectorSearchResult(
+                database_id=self.db_id,
+                database_name=self.name,
+                category=self.category,
+                total_hits=0,
+                page=page,
+                page_size=limit,
+                execution_time_ms=0.0,
+                records=[],
+            )
 
+        url = f"https://alphafold.ebi.ac.uk/api/prediction/{clean_q}"
         resp = await self._safe_request("GET", url)
+
+        # If direct accession lookup returned 400/404, query UniProt to map gene symbol to accession
+        if (not resp or resp.status_code in (400, 404)) and len(clean_q) < 12:
+            uniprot_url = "https://rest.uniprot.org/uniprotkb/search"
+            u_resp = await self._safe_request(
+                "GET",
+                uniprot_url,
+                params={"query": f"gene_exact:{clean_q} AND organism_id:9606", "size": 1, "fields": "accession"},
+            )
+            if u_resp and u_resp.status_code == 200:
+                results = u_resp.json().get("results", [])
+                if results and "primaryAccession" in results[0]:
+                    mapped_acc = results[0]["primaryAccession"]
+                    url = f"https://alphafold.ebi.ac.uk/api/prediction/{mapped_acc}"
+                    resp = await self._safe_request("GET", url)
+
         exec_ms = round((time.perf_counter() - start_time) * 1000, 2)
         if not resp or resp.status_code != 200:
             return ConnectorSearchResult(
@@ -43,7 +74,7 @@ class AlphaFoldConnector(BaseDatabaseConnector):
                 page_size=limit,
                 execution_time_ms=exec_ms,
                 records=[],
-                error=None if (resp and resp.status_code == 404) else f"AlphaFold lookup failed ({resp.status_code if resp else 'No response'})",
+                error=None if (resp and resp.status_code in (400, 404)) else f"AlphaFold lookup failed ({resp.status_code if resp else 'No response'})",
             )
 
         items: list[dict[str, Any]] = resp.json()
